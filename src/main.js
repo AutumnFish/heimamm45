@@ -6,6 +6,8 @@ import router from './router/index.js'
 import ElementUI from 'element-ui';
 // 导入 饿了么 的css
 import 'element-ui/lib/theme-chalk/index.css';
+// 导入自己的初始化样式
+import './style/base.css'
 
 // 注册 饿了么 ui
 Vue.use(ElementUI);
