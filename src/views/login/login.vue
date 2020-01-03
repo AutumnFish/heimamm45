@@ -32,8 +32,9 @@
               <el-input prefix-icon="el-icon-key" v-model="ruleForm.code" placeholder="请输入验证码"></el-input>
             </el-col>
             <el-col class="code-col" :span="6">
-              <!-- 一部分 -->
-              <img src="../../assets/code.jpg" alt="" />
+              <!-- 验证码 -->
+              <!-- <img src="../../assets/code.jpg" alt="" /> -->
+              <img :src="codeUrl" alt="" />
             </el-col>
           </el-row>
         </el-form-item>
@@ -79,6 +80,8 @@ export default {
   name: "login",
   data() {
     return {
+      // 验证码的地址
+      codeUrl: process.env.VUE_APP_BASEURL+'/captcha?type=login',
       ruleForm: {
         phone: "",
         password: "",

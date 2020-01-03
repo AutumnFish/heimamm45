@@ -14,6 +14,9 @@ Vue.use(ElementUI);
 
 Vue.config.productionTip = false
 
+// 测试环境变量
+// window.console.log(process.env.VUE_APP_BASEURL)
+
 new Vue({
   render: h => h(App),
   // 挂载 注入 Vue实例
