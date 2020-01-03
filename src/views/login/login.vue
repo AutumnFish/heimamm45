@@ -34,7 +34,7 @@
             <el-col class="code-col" :span="6">
               <!-- 验证码 -->
               <!-- <img src="../../assets/code.jpg" alt="" /> -->
-              <img :src="codeUrl" alt="" />
+              <img @click="changeCode" :src="codeUrl" alt="" />
             </el-col>
           </el-row>
         </el-form-item>
@@ -114,6 +114,14 @@ export default {
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
+      },
+      // 切换验证码
+      changeCode(){
+        // 必须要有分隔符
+        // this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&'+Date.now()
+        // this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&'+Math.random()
+        this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&t='+Date.now()
+
       }
     }
 };
@@ -173,6 +181,8 @@ export default {
         img{
           width: 100%;
           height: 100%;
+          // 小手手
+          cursor: pointer;
         }
       }
       // 更高的文本框
