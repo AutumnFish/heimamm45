@@ -13,7 +13,12 @@
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="43px" class="demo-ruleForm login-form">
         <!-- 手机号 -->
         <el-form-item prop="phone">
-          <el-input class="high-input" prefix-icon="el-icon-user" v-model="ruleForm.phone" placeholder="请输入手机号"></el-input>
+          <el-input
+            class="high-input"
+            prefix-icon="el-icon-user"
+            v-model="ruleForm.phone"
+            placeholder="请输入手机号"
+          ></el-input>
         </el-form-item>
         <!-- 密码 -->
         <el-form-item prop="password">
@@ -40,7 +45,7 @@
         </el-form-item>
         <!-- 协议 -->
         <el-form-item>
-          <el-checkbox v-model="checked">
+          <el-checkbox v-model="ruleForm.checked">
             我已阅读并同意
             <el-link type="primary">用户协议</el-link>
             和
@@ -48,8 +53,8 @@
           </el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button class="login-btn" type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-          <el-button class="login-btn reset-btn" type="primary" @click="resetForm('ruleForm')">重置</el-button>
+          <el-button class="login-btn" type="primary" @click="submitForm('ruleForm')">登录</el-button>
+          <el-button class="login-btn reset-btn" type="primary" @click="resetForm('ruleForm')">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -59,6 +64,8 @@
 </template>
 
 <script>
+// 导入 axios
+import axios from "axios";
 // 定义验证手机号的方法
 const validatePhone = (rule, value, callback) => {
   if (value === "") {
@@ -81,11 +88,13 @@ export default {
   data() {
     return {
       // 验证码的地址
-      codeUrl: process.env.VUE_APP_BASEURL+'/captcha?type=login',
+      codeUrl: process.env.VUE_APP_BASEURL + "/captcha?type=login",
       ruleForm: {
         phone: "",
         password: "",
-        code: ""
+        code: "",
+        // 是否勾选
+        checked: false
       },
       rules: {
         phone: [{ validator: validatePhone, trigger: "blur" }],
@@ -100,30 +109,55 @@ export default {
       }
     };
   },
-   methods: {
-      submitForm(formName) {
-        // 等同于 this.$refs.ruleForm
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.$message.success("验证成功")
-          } else {
-            this.$message.error("格式不对哦，检查一下呗！")
-            return false;
-          }
-        });
-      },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
-      },
-      // 切换验证码
-      changeCode(){
-        // 必须要有分隔符
-        // this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&'+Date.now()
-        // this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&'+Math.random()
-        this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&t='+Date.now()
-
+  methods: {
+    // 登录点击事件
+    submitForm(formName) {
+      // 是否勾选
+      if (this.ruleForm.checked == false) {
+        // 提示
+        this.$message.warning("亲爱的用户，请先勾选用户协议哦！(づ￣ 3￣)づ");
+        return;
       }
+      // 等同于 this.$refs.ruleForm
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          // this.$message.success("验证成功");
+          // 调用接口
+          axios({
+            url: process.env.VUE_APP_BASEURL + "/login",
+            method: "post",
+            withCredentials: true,
+            data: {
+              phone: this.ruleForm.phone,
+              password: this.ruleForm.password,
+              code: this.ruleForm.code
+            }
+          }).then(res => {
+            // window.console.log(res);
+            if(res.data.code===202){
+              // 错误
+              this.$message.error(res.data.message)
+            }else if(res.data.code===200){
+              this.$message.success('老铁，你可算回来啦！！！')
+            }
+          });
+        } else {
+          this.$message.error("格式不对哦，检查一下呗！");
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    // 切换验证码
+    changeCode() {
+      // 必须要有分隔符
+      // this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&'+Date.now()
+      // this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&'+Math.random()
+      this.codeUrl = process.env.VUE_APP_BASEURL + "/captcha?type=login&t=" + Date.now();
     }
+  }
 };
 </script>
 
@@ -172,13 +206,13 @@ export default {
       }
     }
     // 登录表单
-    .login-form{
+    .login-form {
       padding-right: 41px;
       margin-top: 27px;
       // 栅格 验证码
       .code-col {
         height: 40px;
-        img{
+        img {
           width: 100%;
           height: 100%;
           // 小手手
@@ -186,9 +220,9 @@ export default {
         }
       }
       // 更高的文本框
-      .high-input >input{
+      .high-input > input {
         height: 45px;
-        line-height: 45px
+        line-height: 45px;
       }
     }
     // 表单内部的 按钮
@@ -196,7 +230,7 @@ export default {
       width: 100%;
       margin-left: 0;
     }
-    .reset-btn{
+    .reset-btn {
       margin-top: 28px;
     }
   }
