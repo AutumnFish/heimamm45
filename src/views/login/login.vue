@@ -80,9 +80,10 @@
           <el-row>
             <el-col :span="16">
               <el-input v-model="registerForm.name" autocomplete="off"></el-input>
-              </el-col>
-            <el-col :offset="1" :span="7">
-              <img src="../../assets/code.jpg" alt="">
+            </el-col>
+            <el-col :offset="1" :span="7" class="code-col">
+              <!-- 注册验证码 -->
+              <img  @click="changeRegCode" :src="regCodeUrl" alt="" />
             </el-col>
           </el-row>
         </el-form-item>
@@ -92,10 +93,9 @@
               <el-input v-model="registerForm.name" autocomplete="off"></el-input>
             </el-col>
             <el-col :offset="1" :span="7">
-              <el-button >获取用户验证码</el-button>
+              <el-button>获取用户验证码</el-button>
             </el-col>
           </el-row>
-          
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -133,7 +133,7 @@ export default {
   name: "login",
   data() {
     return {
-      // 验证码的地址
+      // 登录验证码的地址
       codeUrl: process.env.VUE_APP_BASEURL + "/captcha?type=login",
       ruleForm: {
         phone: "",
@@ -158,7 +158,9 @@ export default {
       // 注册表单
       registerForm: {},
       // 左侧间隙
-      formLabelWidth:'60px'
+      formLabelWidth: "60px",
+      // 注册验证码的地址
+      regCodeUrl: process.env.VUE_APP_BASEURL + "/captcha?type=sendsms"
     };
   },
   methods: {
@@ -203,6 +205,10 @@ export default {
       // this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&'+Date.now()
       // this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&'+Math.random()
       this.codeUrl = process.env.VUE_APP_BASEURL + "/captcha?type=login&t=" + Date.now();
+    },
+    // 切换注册验证码
+    changeRegCode() {
+      this.regCodeUrl = `${process.env.VUE_APP_BASEURL}/captcha?type=sendsms&t=${Date.now()}`;
     }
   }
 };
@@ -256,16 +262,7 @@ export default {
     .login-form {
       padding-right: 41px;
       margin-top: 27px;
-      // 栅格 验证码
-      .code-col {
-        height: 40px;
-        img {
-          width: 100%;
-          height: 100%;
-          // 小手手
-          cursor: pointer;
-        }
-      }
+
       // 更高的文本框
       .high-input > input {
         height: 45px;
@@ -282,12 +279,24 @@ export default {
     }
   }
   // 对话框
-  .el-dialog__header{
-    background:linear-gradient(to right,rgba(1, 198, 250, 1),rgba(20, 147, 250, 1));
+  .el-dialog__header {
+    background: linear-gradient(to right, rgba(1, 198, 250, 1), rgba(20, 147, 250, 1));
   }
   // 对话框的颜色
-  .el-dialog__title{
-    color:white;
+  .el-dialog__title {
+    color: white;
+  }
+
+  // 验证码的样式
+  // 栅格 验证码
+  .code-col {
+    height: 40px;
+    img {
+      width: 100%;
+      height: 100%;
+      // 小手手
+      cursor: pointer;
+    }
   }
   .bg {
   }
