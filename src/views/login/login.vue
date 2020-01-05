@@ -65,7 +65,11 @@
 
 <script>
 // 导入 axios
-import axios from "axios";
+// import axios from "axios";
+// 导入抽取好的 api 方法
+import {login} from '../../api/login.js'
+
+
 // 定义验证手机号的方法
 const validatePhone = (rule, value, callback) => {
   if (value === "") {
@@ -123,16 +127,12 @@ export default {
         if (valid) {
           // this.$message.success("验证成功");
           // 调用接口
-          axios({
-            url: process.env.VUE_APP_BASEURL + "/login",
-            method: "post",
-            withCredentials: true,
-            data: {
-              phone: this.ruleForm.phone,
-              password: this.ruleForm.password,
-              code: this.ruleForm.code
-            }
-          }).then(res => {
+        login({
+          phone:this.ruleForm.phone,
+          password:this.ruleForm.password,
+          code:this.ruleForm.code,
+        })
+        .then(res => {
             // window.console.log(res);
             if(res.data.code===202){
               // 错误
