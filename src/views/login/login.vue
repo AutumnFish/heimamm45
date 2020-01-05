@@ -64,6 +64,20 @@
     <!-- 注册对话框 -->
     <el-dialog center width="603px" title="用户注册" :visible.sync="dialogFormVisible">
       <el-form :model="registerForm">
+        <!-- 上传 -->
+        <el-form-item label="头像" :label-width="formLabelWidth">
+          <el-upload
+            class="avatar-uploader"
+            :action="uploadURL"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+            name="image"
+          >
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
         <el-form-item label="昵称" :label-width="formLabelWidth">
           <el-input v-model="registerForm.name" autocomplete="off"></el-input>
         </el-form-item>
@@ -94,7 +108,7 @@
             </el-col>
             <el-col :offset="1" :span="7">
               <!-- 如果 delayTime不等于0 返回的是 false -->
-              <el-button :disabled="delayTime!=0" @click="getMessage">{{ btnMessage }}</el-button>
+              <el-button :disabled="delayTime != 0" @click="getMessage">{{ btnMessage }}</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -170,7 +184,12 @@ export default {
       // 定义按钮的文本
       btnMessage: "获取用户验证码",
       // 定义倒计时的时间
-      delayTime: 0
+      delayTime: 0,
+      // 图片地址
+      imageUrl:"",
+      // 文件的上传地址
+      uploadURL: process.env.VUE_APP_BASEURL+'/uploads'
+      
     };
   },
   methods: {
@@ -264,6 +283,29 @@ export default {
           this.$message.success("短信验证码是:" + res.data.data.captcha);
         }
       });
+    },
+    // 上传的逻辑
+    // 上传成功了
+    handleAvatarSuccess(res, file) {
+      // 生成本地的临时路径
+      this.imageUrl = URL.createObjectURL(file.raw);
+      // 打印res
+      // window.console.log(res)
+      // 获取服务器返回的 地址
+      window.console.log(res.data.file_path)
+    },
+    // 上传之前
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
     }
   }
 };
@@ -352,6 +394,33 @@ export default {
       // 小手手
       cursor: pointer;
     }
+  }
+  // 上传组件的样式
+  .avatar-uploader{
+    text-align: center;
+  }
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
   }
   .bg {
   }
