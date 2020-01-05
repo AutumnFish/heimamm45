@@ -54,12 +54,55 @@
         </el-form-item>
         <el-form-item>
           <el-button class="login-btn" type="primary" @click="submitForm('ruleForm')">登录</el-button>
-          <el-button class="login-btn reset-btn" type="primary" @click="resetForm('ruleForm')">注册</el-button>
+          <el-button class="login-btn reset-btn" type="primary" @click="dialogFormVisible = true">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
     <!-- 右边的图片 -->
     <img class="bg" src="../../assets/login_banner_ele.png" alt="" />
+
+    <!-- 注册对话框 -->
+    <el-dialog center width="603px" title="用户注册" :visible.sync="dialogFormVisible">
+      <el-form :model="registerForm">
+        <el-form-item label="昵称" :label-width="formLabelWidth">
+          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="手机" :label-width="formLabelWidth">
+          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" :label-width="formLabelWidth">
+          <el-input show-password v-model="registerForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="图形码" :label-width="formLabelWidth">
+          <el-row>
+            <el-col :span="16">
+              <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+              </el-col>
+            <el-col :offset="1" :span="7">
+              <img src="../../assets/code.jpg" alt="">
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item label="验证码" :label-width="formLabelWidth">
+          <el-row>
+            <el-col :span="16">
+              <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+            </el-col>
+            <el-col :offset="1" :span="7">
+              <el-button >获取用户验证码</el-button>
+            </el-col>
+          </el-row>
+          
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -67,8 +110,7 @@
 // 导入 axios
 // import axios from "axios";
 // 导入抽取好的 api 方法
-import {login} from '../../api/login.js'
-
+import { login } from "../../api/login.js";
 
 // 定义验证手机号的方法
 const validatePhone = (rule, value, callback) => {
@@ -110,7 +152,13 @@ export default {
           { required: true, message: "验证码", trigger: "blur" },
           { min: 4, max: 4, message: "长度在必须为4", trigger: "change" }
         ]
-      }
+      },
+      // 注册对话框相关
+      dialogFormVisible: false,
+      // 注册表单
+      registerForm: {},
+      // 左侧间隙
+      formLabelWidth:'60px'
     };
   },
   methods: {
@@ -127,18 +175,17 @@ export default {
         if (valid) {
           // this.$message.success("验证成功");
           // 调用接口
-        login({
-          phone:this.ruleForm.phone,
-          password:this.ruleForm.password,
-          code:this.ruleForm.code,
-        })
-        .then(res => {
+          login({
+            phone: this.ruleForm.phone,
+            password: this.ruleForm.password,
+            code: this.ruleForm.code
+          }).then(res => {
             // window.console.log(res);
-            if(res.data.code===202){
+            if (res.data.code === 202) {
               // 错误
-              this.$message.error(res.data.message)
-            }else if(res.data.code===200){
-              this.$message.success('老铁，你可算回来啦！！！')
+              this.$message.error(res.data.message);
+            } else if (res.data.code === 200) {
+              this.$message.success("老铁，你可算回来啦！！！");
             }
           });
         } else {
@@ -233,6 +280,14 @@ export default {
     .reset-btn {
       margin-top: 28px;
     }
+  }
+  // 对话框
+  .el-dialog__header{
+    background:linear-gradient(to right,rgba(1, 198, 250, 1),rgba(20, 147, 250, 1));
+  }
+  // 对话框的颜色
+  .el-dialog__title{
+    color:white;
   }
   .bg {
   }
