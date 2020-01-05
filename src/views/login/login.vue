@@ -71,7 +71,7 @@
           <el-input v-model="registerForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="手机" :label-width="formLabelWidth">
-          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+          <el-input v-model="registerForm.phone" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码" :label-width="formLabelWidth">
           <el-input show-password v-model="registerForm.name" autocomplete="off"></el-input>
@@ -79,7 +79,7 @@
         <el-form-item label="图形码" :label-width="formLabelWidth">
           <el-row>
             <el-col :span="16">
-              <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+              <el-input v-model="registerForm.code" autocomplete="off"></el-input>
             </el-col>
             <el-col :offset="1" :span="7" class="code-col">
               <!-- 注册验证码 -->
@@ -93,7 +93,7 @@
               <el-input v-model="registerForm.name" autocomplete="off"></el-input>
             </el-col>
             <el-col :offset="1" :span="7">
-              <el-button>获取用户验证码</el-button>
+              <el-button @click="getMessage">获取用户验证码</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -110,7 +110,7 @@
 // 导入 axios
 // import axios from "axios";
 // 导入抽取好的 api 方法
-import { login } from "../../api/login.js";
+import { login,sendsms } from "../../api/login.js";
 
 // 定义验证手机号的方法
 const validatePhone = (rule, value, callback) => {
@@ -156,7 +156,12 @@ export default {
       // 注册对话框相关
       dialogFormVisible: false,
       // 注册表单
-      registerForm: {},
+      registerForm: {
+        // 手机号
+        phone:"",
+        // 图片验证码
+        code:""
+      },
       // 左侧间隙
       formLabelWidth: "60px",
       // 注册验证码的地址
@@ -209,6 +214,29 @@ export default {
     // 切换注册验证码
     changeRegCode() {
       this.regCodeUrl = `${process.env.VUE_APP_BASEURL}/captcha?type=sendsms&t=${Date.now()}`;
+    },
+    // 获取短信
+    getMessage(){
+      // 判断 一些值
+      // 手机号
+      // const reg =/^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+      // if(reg.test(this.registerForm.phone)==false){
+      //   return this.$message.error("小老弟，手机号不太对哦！！！");
+      // }
+      // 图片验证码
+      if(this.registerForm.code.length!=4){
+        return this.$message.error("小老弟，图形验证码不太对哦！！！");
+      }
+      // 调用接口
+      sendsms({
+        code:this.registerForm.code,
+        phone:this.registerForm.phone,
+      }).then(res=>{
+        // window.console.log(res)
+        if(res.data.code==200){
+          this.$message.success("短信验证码是:"+res.data.data.captcha)
+        }
+      })
     }
   }
 };
