@@ -4,7 +4,9 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 
 // 导入 组件
+// 注册组件
 import login from "../views/login/login.vue";
+// 首页组件
 import index from "../views/index/index.vue";
 
 // 注册
