@@ -22,3 +22,13 @@ export function sendsms(data) {
     data // data: data
   });
 }
+// 定义一个 用户注册的 方法 并暴露出去
+export function register(data) {
+  return axios({
+    url: process.env.VUE_APP_BASEURL + "/register",
+    method: "post",
+    // 跨域 是否携带 cookie
+    withCredentials: true,
+    data // data: data
+  });
+}
