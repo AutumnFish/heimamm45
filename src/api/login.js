@@ -32,3 +32,18 @@ export function register(data) {
     data // data: data
   });
 }
+
+
+// 获取用户信息
+export function info() {
+  return axios({
+    url: process.env.VUE_APP_BASEURL + "/info",
+    method: "get",
+    // 跨域 是否携带 cookie
+    withCredentials: true,
+    headers:{
+      // 从缓存中获取
+      token:window.localStorage.getItem("heimammtoken")
+    }
+  });
+}
