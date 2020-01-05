@@ -63,9 +63,9 @@
 
     <!-- 注册对话框 -->
     <el-dialog center width="603px" title="用户注册" :visible.sync="dialogFormVisible">
-      <el-form :model="registerForm">
+      <el-form :model="registerForm" :rules="registerRules">
         <!-- 上传 -->
-        <el-form-item label="头像" :label-width="formLabelWidth">
+        <el-form-item label="头像" prop="avatar" :label-width="formLabelWidth">
           <el-upload
             class="avatar-uploader"
             :action="uploadURL"
@@ -78,18 +78,19 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="昵称" :label-width="formLabelWidth">
-          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+        <el-form-item label="昵称" prop="username" :label-width="formLabelWidth">
+          <el-input v-model="registerForm.username" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱" :label-width="formLabelWidth">
-          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+        <el-form-item label="邮箱" prop="email" :label-width="formLabelWidth">
+          <el-input v-model="registerForm.email" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="手机" :label-width="formLabelWidth">
+        <el-form-item label="手机" prop="phone" :label-width="formLabelWidth">
           <el-input v-model="registerForm.phone" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input show-password v-model="registerForm.name" autocomplete="off"></el-input>
+        <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
+          <el-input show-password v-model="registerForm.password" autocomplete="off"></el-input>
         </el-form-item>
+        <!-- 获取手机短信的 图片验证码 -->
         <el-form-item label="图形码" :label-width="formLabelWidth">
           <el-row>
             <el-col :span="16">
@@ -101,10 +102,10 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="验证码" :label-width="formLabelWidth">
+        <el-form-item label="验证码" prop="rcode" :label-width="formLabelWidth">
           <el-row>
             <el-col :span="16">
-              <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+              <el-input v-model="registerForm.rcode" autocomplete="off"></el-input>
             </el-col>
             <el-col :offset="1" :span="7">
               <!-- 如果 delayTime不等于0 返回的是 false -->
@@ -144,6 +145,23 @@ const validatePhone = (rule, value, callback) => {
     }
   }
 };
+// 定义验证邮箱的方法
+const validateEmail = (rule, value, callback) => {
+  if (value === "") {
+    callback(new Error("邮箱不能为空"));
+  } else {
+    // 定义正则 正则  对象
+    const reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
+    // 验证
+    if (reg.test(value) == true) {
+      // 对
+      callback();
+    } else {
+      // 错
+      callback(new Error("小老弟，邮箱，写错了哟 O(∩_∩)O哈哈~"));
+    }
+  }
+};
 export default {
   name: "login",
   data() {
@@ -175,7 +193,29 @@ export default {
         // 手机号
         phone: "",
         // 图片验证码
-        code: ""
+        code: "",
+        // 用户名
+        username: "",
+        // 邮箱
+        email: "",
+        // 头像
+        avatar: "",
+        // 密码
+        password: "",
+        // 手机验证码
+        rcode: ""
+      },
+      // 注册表单的 验证规则
+      registerRules: {
+        avatar: [{ required: true, message: "头像不能为空", trigger: "change" }],
+        username: [{ required: true, message: "昵称不能为空", trigger: "change" }],
+        email: [{required: true, validator:validateEmail, trigger: "change" }],
+        phone: [{required: true, validator:validatePhone, trigger: "change" }],
+        password: [
+          {required: true, message: "密码不能为空", trigger: "change" },
+          {min: 6,max:12 ,message: "密码的长度是6~12位", trigger: "change" },
+          ],
+
       },
       // 左侧间隙
       formLabelWidth: "60px",
@@ -186,10 +226,9 @@ export default {
       // 定义倒计时的时间
       delayTime: 0,
       // 图片地址
-      imageUrl:"",
+      imageUrl: "",
       // 文件的上传地址
-      uploadURL: process.env.VUE_APP_BASEURL+'/uploads'
-      
+      uploadURL: process.env.VUE_APP_BASEURL + "/uploads"
     };
   },
   methods: {
@@ -292,7 +331,7 @@ export default {
       // 打印res
       // window.console.log(res)
       // 获取服务器返回的 地址
-      window.console.log(res.data.file_path)
+      window.console.log(res.data.file_path);
     },
     // 上传之前
     beforeAvatarUpload(file) {
@@ -396,7 +435,7 @@ export default {
     }
   }
   // 上传组件的样式
-  .avatar-uploader{
+  .avatar-uploader {
     text-align: center;
   }
   .avatar-uploader .el-upload {
