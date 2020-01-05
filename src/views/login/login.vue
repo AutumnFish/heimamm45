@@ -83,7 +83,7 @@
             </el-col>
             <el-col :offset="1" :span="7" class="code-col">
               <!-- 注册验证码 -->
-              <img  @click="changeRegCode" :src="regCodeUrl" alt="" />
+              <img @click="changeRegCode" :src="regCodeUrl" alt="" />
             </el-col>
           </el-row>
         </el-form-item>
@@ -93,7 +93,8 @@
               <el-input v-model="registerForm.name" autocomplete="off"></el-input>
             </el-col>
             <el-col :offset="1" :span="7">
-              <el-button @click="getMessage">获取用户验证码</el-button>
+              <!-- 如果 delayTime不等于0 返回的是 false -->
+              <el-button :disabled="delayTime!=0" @click="getMessage">{{ btnMessage }}</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -110,7 +111,7 @@
 // 导入 axios
 // import axios from "axios";
 // 导入抽取好的 api 方法
-import { login,sendsms } from "../../api/login.js";
+import { login, sendsms } from "../../api/login.js";
 
 // 定义验证手机号的方法
 const validatePhone = (rule, value, callback) => {
@@ -158,14 +159,18 @@ export default {
       // 注册表单
       registerForm: {
         // 手机号
-        phone:"",
+        phone: "",
         // 图片验证码
-        code:""
+        code: ""
       },
       // 左侧间隙
       formLabelWidth: "60px",
       // 注册验证码的地址
-      regCodeUrl: process.env.VUE_APP_BASEURL + "/captcha?type=sendsms"
+      regCodeUrl: process.env.VUE_APP_BASEURL + "/captcha?type=sendsms",
+      // 定义按钮的文本
+      btnMessage: "获取用户验证码",
+      // 定义倒计时的时间
+      delayTime: 0
     };
   },
   methods: {
@@ -216,27 +221,49 @@ export default {
       this.regCodeUrl = `${process.env.VUE_APP_BASEURL}/captcha?type=sendsms&t=${Date.now()}`;
     },
     // 获取短信
-    getMessage(){
-      // 判断 一些值
+    getMessage() {
       // 手机号
-      // const reg =/^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
-      // if(reg.test(this.registerForm.phone)==false){
-      //   return this.$message.error("小老弟，手机号不太对哦！！！");
-      // }
+      const reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+      if (reg.test(this.registerForm.phone) == false) {
+        return this.$message.error("小老弟，手机号不太对哦！！！");
+      }
       // 图片验证码
-      if(this.registerForm.code.length!=4){
+      if (this.registerForm.code.length != 4) {
         return this.$message.error("小老弟，图形验证码不太对哦！！！");
       }
+      // 如果没有倒计时 开启
+      if (this.delayTime === 0) {
+        // 改成60
+        this.delayTime = 60;
+        // 判断 一些值
+        const interId = setInterval(() => {
+          // 递减
+          this.delayTime--;
+          // 修改显示的文本
+          this.btnMessage = `还剩下${this.delayTime}秒哦！`;
+          if (this.delayTime === 0) {
+            // 倒计时结束
+            // 清除定时器
+            clearInterval(interId);
+            // 还原文本
+            this.btnMessage = "获取用户验证码";
+          }
+        }, 100);
+      } else {
+        // 正在倒计时中
+        return;
+      }
+
       // 调用接口
       sendsms({
-        code:this.registerForm.code,
-        phone:this.registerForm.phone,
-      }).then(res=>{
+        code: this.registerForm.code,
+        phone: this.registerForm.phone
+      }).then(res => {
         // window.console.log(res)
-        if(res.data.code==200){
-          this.$message.success("短信验证码是:"+res.data.data.captcha)
+        if (res.data.code == 200) {
+          this.$message.success("短信验证码是:" + res.data.data.captcha);
         }
-      })
+      });
     }
   }
 };
