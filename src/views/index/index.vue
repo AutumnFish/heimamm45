@@ -21,7 +21,7 @@
        -->
       <el-aside class="my-aside" width="auto">
         <!-- 导航菜单 -->
-        <el-menu :collapse="collapse" default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+        <el-menu :collapse="collapse" default-active="2" class="el-menu-vertical-demo">
           <el-menu-item index="1">
             <!-- e-charts -->
             <i class="el-icon-pie-chart"></i>
@@ -45,7 +45,9 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main class="my-main">Main</el-main>
+      <el-main class="my-main">
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
