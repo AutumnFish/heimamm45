@@ -91,7 +91,7 @@
           <el-input show-password v-model="registerForm.password" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 获取手机短信的 图片验证码 -->
-        <el-form-item label="图形码" :label-width="formLabelWidth">
+        <el-form-item label="图形码" prop="code" :label-width="formLabelWidth">
           <el-row>
             <el-col :span="16">
               <el-input v-model="registerForm.code" autocomplete="off"></el-input>
@@ -126,7 +126,7 @@
 // 导入 axios
 // import axios from "axios";
 // 导入抽取好的 api 方法
-import { login, sendsms,register } from "../../api/login.js";
+import { login, sendsms, register } from "../../api/login.js";
 
 // 定义验证手机号的方法
 const validatePhone = (rule, value, callback) => {
@@ -209,12 +209,12 @@ export default {
       registerRules: {
         avatar: [{ required: true, message: "头像不能为空", trigger: "change" }],
         username: [{ required: true, message: "昵称不能为空", trigger: "change" }],
-        email: [{required: true, validator:validateEmail, trigger: "change" }],
-        phone: [{required: true, validator:validatePhone, trigger: "change" }],
+        email: [{ required: true, validator: validateEmail, trigger: "change" }],
+        phone: [{ required: true, validator: validatePhone, trigger: "change" }],
         password: [
-          {required: true, message: "密码不能为空", trigger: "change" },
-          {min: 6,max:12 ,message: "密码的长度是6~12位", trigger: "change" },
-          ],
+          { required: true, message: "密码不能为空", trigger: "change" },
+          { min: 6, max: 12, message: "密码的长度是6~12位", trigger: "change" }
+        ]
       },
       // 左侧间隙
       formLabelWidth: "60px",
@@ -256,9 +256,9 @@ export default {
             } else if (res.data.code === 200) {
               this.$message.success("老铁，你可算回来啦！！！");
               // 存token
-              window.localStorage.setItem("heimammtoken",res.data.data.token)
+              window.localStorage.setItem("heimammtoken", res.data.data.token);
               // 去首页
-              this.$router.push("/index")
+              this.$router.push("/index");
             }
           });
         } else {
@@ -267,13 +267,15 @@ export default {
         }
       });
     },
+    // 重置表单
     resetForm(formName) {
+      // 找到el-form  调用resetFields 进而重置表单
       this.$refs[formName].resetFields();
     },
     // 切换验证码
     changeCode() {
       // 必须要有分隔符
-      // this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&'+Date.now()
+      // this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login'+Date.now()
       // this.codeUrl=process.env.VUE_APP_BASEURL+'/captcha?type=login&'+Math.random()
       this.codeUrl = process.env.VUE_APP_BASEURL + "/captcha?type=login&t=" + Date.now();
     },
@@ -336,7 +338,7 @@ export default {
       // 获取服务器返回的 地址
       // window.console.log(res.data.file_path);
       // 保存到 注册表单的 头像中
-      this.registerForm.avatar =res.data.file_path;
+      this.registerForm.avatar = res.data.file_path;
     },
     // 上传之前
     beforeAvatarUpload(file) {
@@ -352,29 +354,34 @@ export default {
       return isJPG && isLt2M;
     },
     // 提交注册
-    submitRegister(){
+    submitRegister() {
       // 验证表单
       // 等同于 this.$refs['registerForm']
-        this.$refs.registerForm.validate(valid => {
+      this.$refs.registerForm.validate(valid => {
         if (valid) {
           // 调用接口
           register({
-            username:this.registerForm.username,
-            phone:this.registerForm.phone,
-            email:this.registerForm.email,
-            avatar:this.registerForm.avatar,
-            password:this.registerForm.password,
-            rcode:this.registerForm.rcode,
-          }).then(res=>{
+            username: this.registerForm.username,
+            phone: this.registerForm.phone,
+            email: this.registerForm.email,
+            // 必须提交头像到服务器
+            avatar: this.registerForm.avatar,
+            password: this.registerForm.password,
+            rcode: this.registerForm.rcode
+          }).then(res => {
             // window.console.log(res)
-            if(res.data.code===200){
+            if (res.data.code === 200) {
               this.$message.success("注册成功,请登录");
               // 关闭弹框
-              this.dialogFormVisible = false
-            }else if(res.data.code===201){
+              this.dialogFormVisible = false;
+              // 清空表单即可
+               this.$refs.registerForm.resetFields();
+               // 本地的预览地址，需要手动清空
+               this.imageUrl = '';
+            } else if (res.data.code === 201) {
               this.$message.warning(res.data.message);
             }
-          })
+          });
         } else {
           this.$message.error("格式不对哦，检查一下呗！");
           return false;
