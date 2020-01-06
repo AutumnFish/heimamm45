@@ -3,7 +3,8 @@
     <el-header class="my-header">
       <!-- 左侧 -->
       <div class="left">
-        <i class="icon el-icon-s-fold"></i>
+        <!-- 左上角的小图标 -->
+        <i @click="collapse=!collapse" class="icon el-icon-s-fold"></i>
         <img class="logo" src="../../assets/index_logo.png" alt="" />
         <span class="title">黑马面面</span>
       </div>
@@ -15,8 +16,12 @@
       </div>
     </el-header>
     <el-container>
-      <el-aside class="my-aside" width="200px">
-        <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+      <!-- width:auto 自动改变  如果不给 或者给死 就不会变
+          因为导航菜单是他的子元素
+       -->
+      <el-aside class="my-aside" width="auto">
+        <!-- 导航菜单 -->
+        <el-menu :collapse="collapse" default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
           <el-menu-item index="1">
             <!-- e-charts -->
             <i class="el-icon-pie-chart"></i>
@@ -55,7 +60,9 @@ export default {
   name: "index",
   data() {
     return {
-      userInfo: {}
+      userInfo: {},
+      // 是否折叠菜单
+      collapse:false
     };
   },
   created() {
@@ -139,6 +146,11 @@ export default {
   }
   .my-main {
     background: #0094ff;
+  }
+  // 导航菜单的 样式
+    .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 200px;
+    min-height: 400px;
   }
 }
 </style>
