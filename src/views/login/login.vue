@@ -127,6 +127,8 @@
 // import axios from "axios";
 // 导入抽取好的 api 方法
 import { login, sendsms, register } from "../../api/login.js";
+// 导入 操纵token的函数
+import { saveToken } from '../../utils/token.js'
 
 // 定义验证手机号的方法
 const validatePhone = (rule, value, callback) => {
@@ -256,7 +258,9 @@ export default {
             } else if (res.data.code === 200) {
               this.$message.success("老铁，你可算回来啦！！！");
               // 存token
-              window.localStorage.setItem("heimammtoken", res.data.data.token);
+              // window.localStorage.setItem("heimammtoken", res.data.data.token);
+              // 使用自己抽取的功能函数
+              saveToken(res.data.data.token)
               // 去首页
               this.$router.push("/index");
             }

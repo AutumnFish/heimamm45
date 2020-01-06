@@ -1,6 +1,9 @@
 // 导入axios
 import axios from "axios";
 
+// 导入 token工具函数
+import { getToken } from '../utils/token.js'
+
 // 定义一个登陆的方法 并暴露出去
 export function login(data) {
   return axios({
@@ -43,7 +46,9 @@ export function info() {
     withCredentials: true,
     headers:{
       // 从缓存中获取
-      token:window.localStorage.getItem("heimammtoken")
+      // token:window.localStorage.getItem("heimammtoken")
+      // 调用 抽取的 token函数来获取token
+      token:getToken()
     }
   });
 }
