@@ -52,3 +52,19 @@ export function info() {
     }
   });
 }
+
+// 用户退出
+export function logout() {
+  return axios({
+    url: process.env.VUE_APP_BASEURL + "/logout",
+    method: "get",
+    // 跨域 是否携带 cookie
+    withCredentials: true,
+    headers:{
+      // 从缓存中获取
+      // token:window.localStorage.getItem("heimammtoken")
+      // 调用 抽取的 token函数来获取token
+      token:getToken()
+    }
+  });
+}

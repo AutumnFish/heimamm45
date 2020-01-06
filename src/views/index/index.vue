@@ -11,7 +11,7 @@
       <div class="right">
         <img class="avatar" :src="userInfo.avatar" alt="" />
         <span class="username">{{ userInfo.username }},您好</span>
-        <el-button size="small" type="primary">退出</el-button>
+        <el-button @click="logout" size="small" type="primary">退出</el-button>
       </div>
     </el-header>
     <el-container>
@@ -23,7 +23,10 @@
 
 <script>
 // 导入api方法
-import { info } from "../../api/login.js";
+import { info,logout } from "../../api/login.js";
+// 导入 删除token方法
+import {removeToken} from '../../utils/token.js'
+
 export default {
   name: "index",
   data() {
@@ -37,8 +40,33 @@ export default {
       // 保存数据
       this.userInfo = res.data.data;
       // 头像没有基地址 自己拼接
-      this.userInfo.avatar = process.env.VUE_APP_BASEURL +'/'+ this.userInfo.avatar;
+      this.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + this.userInfo.avatar;
     });
+  },
+  methods: {
+    logout() {
+      // 对话框
+      this.$confirm("你确认要走?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          // 点击确定
+          logout().then(res=>{
+            // window.console.log(res)
+            if(res.data.code===200){
+              // 成功了
+              removeToken()
+              // 去登录页
+              this.$router.push("/login")
+            }
+          })
+        })
+        .catch(() => {
+          // 点击取消
+        });
+    }
   }
 };
 </script>
