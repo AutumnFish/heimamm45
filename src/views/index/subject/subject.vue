@@ -55,7 +55,6 @@
     </el-card>
     <!-- 使用 新增框组件 -->
     <addDialog ref="addDialog"></addDialog>
-
   </div>
 </template>
 
