@@ -51,7 +51,7 @@
             <el-button @click="changeStatus(scope.row)" type="text">{{
               scope.row.status == 0 ? "启用" : "禁用"
             }}</el-button>
-            <el-button type="text">删除</el-button>
+            <el-button @click="removeSubject(scope.row)" type="text">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -78,7 +78,7 @@
 // 导入 新增框
 import addDialog from "./components/addDialog.vue";
 // 导入 学科接口
-import { subjectList, subjectStatus } from "@/api/subject.js";
+import { subjectList, subjectStatus,subjectRemove } from "@/api/subject.js";
 export default {
   name: "subject",
   // 注册组件
@@ -144,6 +144,26 @@ export default {
           this.getList()
         }
       });
+    },
+    // 删除数据
+    removeSubject(item){
+      // 弹框
+      this.$confirm('你真的要把他删掉吗？哭唧唧', '友情提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+          // 点击确认
+          subjectRemove({
+            id:item.id
+          }).then(res=>{
+            // window.console.log(res)
+            if(res.code===200){
+              this.$message.success("删除成功了哦");
+              this.getList();
+            }
+          })
+      }).catch(() => {});
     }
   }
 };
