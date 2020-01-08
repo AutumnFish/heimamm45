@@ -10,7 +10,7 @@ const subjectRequest = axios.create({
 });
 
 // 拦截器
-// 添加请求拦截器
+// 添加请求  拦截器(回调函数)
 subjectRequest.interceptors.request.use(
   function(config) {
     // 在发送之前 干一些 事情
@@ -24,7 +24,7 @@ subjectRequest.interceptors.request.use(
   }
 );
 
-// 添加响应拦截器
+// 添加响应  拦截器(回调函数)
 subjectRequest.interceptors.response.use(
   function(response) {
     // 对响应的数据 做 一些 事情

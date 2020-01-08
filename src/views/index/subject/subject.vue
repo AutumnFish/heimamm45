@@ -24,7 +24,9 @@
           <el-button>清除</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="$refs.addDialog.dialogFormVisible = true" type="primary" icon="el-icon-plus">新增学科</el-button>
+          <el-button @click="$refs.addDialog.dialogFormVisible = true" type="primary" icon="el-icon-plus"
+            >新增学科</el-button
+          >
         </el-form-item>
       </el-form>
     </el-card>
@@ -36,7 +38,12 @@
         <el-table-column prop="short_name" label="简称"> </el-table-column>
         <el-table-column prop="username" label="创建者"> </el-table-column>
         <el-table-column prop="create_time" label="创建日期"> </el-table-column>
-        <el-table-column prop="status" label="状态"> </el-table-column>
+        <el-table-column prop="status" label="状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status == 0" class="red">禁用</span>
+            <span v-else>启用</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="address" label="操作">
           <template>
             <el-button type="text">编辑</el-button>
@@ -66,29 +73,29 @@
 
 <script>
 // 导入 新增框
-import addDialog from './components/addDialog.vue'
+import addDialog from "./components/addDialog.vue";
 // 导入 学科接口
-import {subjectList} from '@/api/subject.js'
+import { subjectList } from "@/api/subject.js";
 export default {
   name: "subject",
   // 注册组件
-  components:{
-    addDialog// addDialog:addDialog
+  components: {
+    addDialog // addDialog:addDialog
   },
   created() {
     subjectList({
       // 使用定义好的数据，方便后期维护
       // 页码
-      page:this.page,
+      page: this.page,
       // 页容量
-      limit:this.size
-    }).then(res=>{
+      limit: this.size
+    }).then(res => {
       // window.console.log(res)
       // 赋值 数据
-      this.tableData = res.data.items
+      this.tableData = res.data.items;
       // 赋值 总条数
-      this.total = res.data.pagination.total
-    })
+      this.total = res.data.pagination.total;
+    });
   },
   data() {
     return {
@@ -103,7 +110,7 @@ export default {
       // 页容量
       size: 5,
       // 总条数
-      total:0
+      total: 0
     };
   },
   methods: {
@@ -133,6 +140,11 @@ export default {
   .my-pagination {
     text-align: center;
     margin-top: 30px;
+  }
+
+  // 红色的span
+  span.red {
+    color: #ff3d3d;
   }
 }
 </style>
