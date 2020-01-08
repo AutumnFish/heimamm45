@@ -31,13 +31,19 @@
     <el-card class="main-card">
       <el-table :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号" width="180"> </el-table-column>
-        <el-table-column prop="name" label="学科编号" width="180"> </el-table-column>
-        <el-table-column prop="address" label="学科名称"> </el-table-column>
-        <el-table-column prop="address" label="简称"> </el-table-column>
-        <el-table-column prop="address" label="创建者"> </el-table-column>
-        <el-table-column prop="address" label="创建日期"> </el-table-column>
-        <el-table-column prop="address" label="状态"> </el-table-column>
-        <el-table-column prop="address" label="操作"> </el-table-column>
+        <el-table-column prop="rid" label="学科编号" width="180"> </el-table-column>
+        <el-table-column prop="name" label="学科名称"> </el-table-column>
+        <el-table-column prop="short_name" label="简称"> </el-table-column>
+        <el-table-column prop="username" label="创建者"> </el-table-column>
+        <el-table-column prop="create_time" label="创建日期"> </el-table-column>
+        <el-table-column prop="status" label="状态"> </el-table-column>
+        <el-table-column prop="address" label="操作">
+          <template>
+            <el-button type="text">编辑</el-button>
+            <el-button type="text">删除</el-button>
+            <el-button type="text">修改</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 分页器 -->
       <el-pagination
@@ -48,7 +54,7 @@
         :page-sizes="pageSizes"
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
+        :total="total"
         background
       >
       </el-pagination>
@@ -61,16 +67,34 @@
 <script>
 // 导入 新增框
 import addDialog from './components/addDialog.vue'
+// 导入 学科接口
+import {subjectList} from '@/api/subject.js'
 export default {
   name: "subject",
   // 注册组件
   components:{
     addDialog// addDialog:addDialog
   },
+  created() {
+    subjectList({
+      // 使用定义好的数据，方便后期维护
+      // 页码
+      page:this.page,
+      // 页容量
+      limit:this.size
+    }).then(res=>{
+      // window.console.log(res)
+      // 赋值 数据
+      this.tableData = res.data.items
+      // 赋值 总条数
+      this.total = res.data.pagination.total
+    })
+  },
   data() {
     return {
       // 行内表单的数据
       formInline: {},
+      // 表格的数据
       tableData: [],
       // 默认的页码
       page: 1,
@@ -78,6 +102,8 @@ export default {
       pageSizes: [5, 10, 15, 20],
       // 页容量
       size: 5,
+      // 总条数
+      total:0
     };
   },
   methods: {
