@@ -45,10 +45,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="address" label="操作">
-          <template>
+          <template slot-scope="scope">
             <el-button type="text">编辑</el-button>
+            <!-- scope.row这是一整行的数据 全部传到了 changeStatus这个方法中  -->
+            <el-button @click="changeStatus(scope.row)" type="text">{{
+              scope.row.status == 0 ? "启用" : "禁用"
+            }}</el-button>
             <el-button type="text">删除</el-button>
-            <el-button type="text">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -75,7 +78,7 @@
 // 导入 新增框
 import addDialog from "./components/addDialog.vue";
 // 导入 学科接口
-import { subjectList } from "@/api/subject.js";
+import { subjectList, subjectStatus } from "@/api/subject.js";
 export default {
   name: "subject",
   // 注册组件
@@ -83,19 +86,8 @@ export default {
     addDialog // addDialog:addDialog
   },
   created() {
-    subjectList({
-      // 使用定义好的数据，方便后期维护
-      // 页码
-      page: this.page,
-      // 页容量
-      limit: this.size
-    }).then(res => {
-      // window.console.log(res)
-      // 赋值 数据
-      this.tableData = res.data.items;
-      // 赋值 总条数
-      this.total = res.data.pagination.total;
-    });
+    // 获取数据
+    this.getList()
   },
   data() {
     return {
@@ -121,6 +113,37 @@ export default {
     // 页码
     handleCurrentChange(current) {
       window.console.log("页码:" + current);
+    },
+    // 获取数据的方法
+    getList() {
+      subjectList({
+        // 使用定义好的数据，方便后期维护
+        // 页码
+        page: this.page,
+        // 页容量
+        limit: this.size
+      }).then(res => {
+        // window.console.log(res)
+        // 赋值 数据
+        this.tableData = res.data.items;
+        // 赋值 总条数
+        this.total = res.data.pagination.total;
+      });
+    },
+    // 修改状态
+    changeStatus(item) {
+      // window.console.log(item)
+      // window.console.log(item.id)
+      subjectStatus({
+        id: item.id
+      }).then(res => {
+        // window.console.log(res);
+        if (res.code == 200) {
+          this.$message.success("修改成功");
+          // 重新获取数据
+          this.getList()
+        }
+      });
     }
   }
 };
