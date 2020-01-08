@@ -1,17 +1,17 @@
 <template>
   <div class="subject-container">
     <el-card class="header-card">
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="学科编号">
+      <el-form ref="formInline" :inline="true" :model="formInline" class="demo-form-inline">
+        <el-form-item label="学科编号" prop="rid">
           <el-input class="small" v-model="formInline.rid"></el-input>
         </el-form-item>
-        <el-form-item label="学科名称">
+        <el-form-item label="学科名称" prop="name">
           <el-input class="normal" v-model="formInline.name"></el-input>
         </el-form-item>
-        <el-form-item label="创建者">
+        <el-form-item label="创建者" prop="username">
           <el-input class="small" v-model="formInline.username"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="状态" prop="status">
           <el-select class="normal" v-model="formInline.status" placeholder="请选择状态">
             <el-option label="启用" value="1"></el-option>
             <el-option label="禁用" value="0"></el-option>
@@ -21,7 +21,7 @@
           <el-button type="primary" @click="searchSubject">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button>清除</el-button>
+          <el-button @click="clearQuery">清除</el-button>
         </el-form-item>
         <el-form-item>
           <el-button @click="$refs.addDialog.dialogFormVisible = true" type="primary" icon="el-icon-plus"
@@ -46,7 +46,8 @@
         </el-table-column>
         <el-table-column prop="address" label="操作">
           <template slot-scope="scope">
-            <el-button type="text">编辑</el-button>
+            <!-- 进入编辑状态 -->
+            <el-button @click="enterEdit(scope.row)" type="text">编辑</el-button>
             <!-- scope.row这是一整行的数据 全部传到了 changeStatus这个方法中  -->
             <el-button @click="changeStatus(scope.row)" type="text">{{
               scope.row.status == 0 ? "启用" : "禁用"
@@ -71,19 +72,24 @@
     </el-card>
     <!-- 使用 新增框组件 -->
     <addDialog ref="addDialog"></addDialog>
+    <!-- 使用 编辑框组件 -->
+    <editDialog ref="editDialog"></editDialog>
   </div>
 </template>
 
 <script>
 // 导入 新增框
 import addDialog from "./components/addDialog.vue";
+// 导入 编辑框
+import editDialog from "./components/editDialog.vue";
 // 导入 学科接口
 import { subjectList, subjectStatus, subjectRemove } from "@/api/subject.js";
 export default {
   name: "subject",
   // 注册组件
   components: {
-    addDialog // addDialog:addDialog
+    addDialog,
+    editDialog // addDialog:addDialog
   },
   created() {
     // 获取数据
@@ -93,19 +99,19 @@ export default {
     return {
       // 行内表单的数据
       formInline: {
-        rid:"",// 学科编号
-        name:"",// 学科名称
-        username:"",// 创建者
-        status:""// 状态
+        rid: "", // 学科编号
+        name: "", // 学科名称
+        username: "", // 创建者
+        status: "" // 状态
       },
       // 表格的数据
       tableData: [],
       // 默认的页码
       page: 1,
       // 页容量选项,
-      pageSizes: [5, 10, 15, 20],
+      pageSizes: [2, 4, 6, 8],
       // 页容量
-      size: 5,
+      size: 2,
       // 总条数
       total: 0
     };
@@ -113,11 +119,21 @@ export default {
   methods: {
     // 每一页的数据量 改变（页容量）
     handleSizeChange(size) {
-      window.console.log("页容量:" + size);
+      // window.console.log("页容量:" + size);
+      // 把页码保存起来
+      this.size = size;
+      // 会到第一页
+      this.page = 1;
+      // 通过新的页面去调用数据
+      this.getList();
     },
     // 页码
     handleCurrentChange(current) {
       window.console.log("页码:" + current);
+      // 把页码保存起来
+      this.page = current;
+      // 通过新的页面去调用数据
+      this.getList();
     },
     // 获取数据的方法
     getList() {
@@ -175,9 +191,25 @@ export default {
         .catch(() => {});
     },
     // 查询数据
-    searchSubject(){
+    searchSubject() {
       // 传递参数
       this.getList();
+    },
+    // 清空搜索
+    clearQuery() {
+      // 清空表单
+      this.$refs.formInline.resetFields();
+      // 调用接口
+      this.getList();
+    },
+    // 进入编辑状态
+    enterEdit(item) {
+      // 显示编辑框
+      this.$refs.editDialog.dialogFormVisible = true;
+      // window.console.log(item)
+      // 设置编辑框的数据
+      // this.$refs.editDialog.editForm = item;
+      this.$refs.editDialog.editForm = JSON.parse(JSON.stringify(item));
     }
   }
 };
