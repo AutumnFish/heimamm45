@@ -3,22 +3,22 @@
     <el-card class="header-card">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="学科编号">
-          <el-input class="small" v-model="formInline.user"></el-input>
+          <el-input class="small" v-model="formInline.rid"></el-input>
         </el-form-item>
         <el-form-item label="学科名称">
-          <el-input class="normal" v-model="formInline.user"></el-input>
+          <el-input class="normal" v-model="formInline.name"></el-input>
         </el-form-item>
         <el-form-item label="创建者">
-          <el-input class="small" v-model="formInline.user"></el-input>
+          <el-input class="small" v-model="formInline.username"></el-input>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select class="normal" v-model="formInline.region" placeholder="请选择状态">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select class="normal" v-model="formInline.status" placeholder="请选择状态">
+            <el-option label="启用" value="1"></el-option>
+            <el-option label="禁用" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">查询</el-button>
+          <el-button type="primary" @click="searchSubject">查询</el-button>
         </el-form-item>
         <el-form-item>
           <el-button>清除</el-button>
@@ -78,7 +78,7 @@
 // 导入 新增框
 import addDialog from "./components/addDialog.vue";
 // 导入 学科接口
-import { subjectList, subjectStatus,subjectRemove } from "@/api/subject.js";
+import { subjectList, subjectStatus, subjectRemove } from "@/api/subject.js";
 export default {
   name: "subject",
   // 注册组件
@@ -87,12 +87,17 @@ export default {
   },
   created() {
     // 获取数据
-    this.getList()
+    this.getList();
   },
   data() {
     return {
       // 行内表单的数据
-      formInline: {},
+      formInline: {
+        rid:"",// 学科编号
+        name:"",// 学科名称
+        username:"",// 创建者
+        status:""// 状态
+      },
       // 表格的数据
       tableData: [],
       // 默认的页码
@@ -121,7 +126,9 @@ export default {
         // 页码
         page: this.page,
         // 页容量
-        limit: this.size
+        limit: this.size,
+        // 将formInline合并进来
+        ...this.formInline
       }).then(res => {
         // window.console.log(res)
         // 赋值 数据
@@ -141,29 +148,36 @@ export default {
         if (res.code == 200) {
           this.$message.success("修改成功");
           // 重新获取数据
-          this.getList()
+          this.getList();
         }
       });
     },
     // 删除数据
-    removeSubject(item){
+    removeSubject(item) {
       // 弹框
-      this.$confirm('你真的要把他删掉吗？哭唧唧', '友情提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+      this.$confirm("你真的要把他删掉吗？哭唧唧", "友情提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
           // 点击确认
           subjectRemove({
-            id:item.id
-          }).then(res=>{
+            id: item.id
+          }).then(res => {
             // window.console.log(res)
-            if(res.code===200){
+            if (res.code === 200) {
               this.$message.success("删除成功了哦");
               this.getList();
             }
-          })
-      }).catch(() => {});
+          });
+        })
+        .catch(() => {});
+    },
+    // 查询数据
+    searchSubject(){
+      // 传递参数
+      this.getList();
     }
   }
 };
