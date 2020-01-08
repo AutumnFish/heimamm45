@@ -24,7 +24,7 @@
           <el-button>清除</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="el-icon-plus">新增学科</el-button>
+          <el-button @click="dialogFormVisible = true" type="primary" icon="el-icon-plus">新增学科</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -49,10 +49,35 @@
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="400"
-        background 
+        background
       >
       </el-pagination>
     </el-card>
+
+    <!-- 新增的对话框 -->
+    <el-dialog center width="600px" title="新增学科" :visible.sync="dialogFormVisible">
+      <el-form :model="addForm">
+        <el-form-item label="学科编号" :label-width="formLabelWidth">
+          <el-input v-model="addForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科名称" :label-width="formLabelWidth">
+          <el-input v-model="addForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科简称" :label-width="formLabelWidth">
+          <el-input v-model="addForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科简介" :label-width="formLabelWidth">
+          <el-input type="textarea" :rows="2" v-model="addForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科备注" :label-width="formLabelWidth">
+          <el-input v-model="addForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -65,24 +90,29 @@ export default {
       formInline: {},
       tableData: [],
       // 默认的页码
-      page:1,
+      page: 1,
       // 页容量选项,
-      pageSizes:[5,10,15,20],
+      pageSizes: [5, 10, 15, 20],
       // 页容量
-      size:5
+      size: 5,
+      // 对话框中 文本的尺寸
+      formLabelWidth: "122px",
+      // 是否显示对话框
+      dialogFormVisible: false,
+      // 新增表单
+      addForm: {}
     };
   },
   methods: {
     // 每一页的数据量 改变（页容量）
-    handleSizeChange(size){
-      window.console.log("页容量:"+size);
+    handleSizeChange(size) {
+      window.console.log("页容量:" + size);
     },
     // 页码
-    handleCurrentChange(current){
-      window.console.log("页码:"+current);
-
-    },
-  },
+    handleCurrentChange(current) {
+      window.console.log("页码:" + current);
+    }
+  }
 };
 </script>
 
@@ -97,7 +127,7 @@ export default {
   .main-card {
     margin-top: 20px;
   }
-  .my-pagination{
+  .my-pagination {
     text-align: center;
     margin-top: 30px;
   }
