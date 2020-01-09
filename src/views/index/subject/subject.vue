@@ -185,6 +185,18 @@ export default {
             // window.console.log(res)
             if (res.code === 200) {
               this.$message.success("删除成功了哦");
+              // 判断这一页是否已经没有数据了
+              if (this.tableData.length == 1) {
+                // 上一页
+                this.page--;
+                // 如果=0 变为1
+                // 三元
+                // this.page = this.page==0?1:this.page
+                if (this.page == 0) {
+                  this.page = 1;
+                }
+              }
+
               this.getList();
             }
           });
