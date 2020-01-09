@@ -123,12 +123,22 @@ export default {
     // 页容量改变
     // newSize 新的页容量
     sizeChange(newSize) {
-      window.console.log(newSize);
+      // window.console.log(newSize);
+      // 保存新 页容量
+      this.size = newSize
+      // 页码变为1
+      this.page =1
+      // 调用接口
+      this.getList()
     },
     // 页码改变
     // newPage 新的页码
     pageChange(newPage) {
-      window.console.log(newPage);
+      // window.console.log(newPage);
+      // 保存新页码
+      this.page = newPage
+      // 调用接口
+      this.getList()
     },
     // 抽取 获取企业列表的方法
     getList() {
