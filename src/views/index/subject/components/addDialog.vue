@@ -48,6 +48,8 @@ export default {
               this.dialogFormVisible = false;
               // 清空内容
               this.$refs.addForm.resetFields();
+              // 调用父组件的 方法 重新获取数据
+              this.$parent.getList()
 
             }else if(res.code===201){
               // id重复
