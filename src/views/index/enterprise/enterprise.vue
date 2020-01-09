@@ -2,27 +2,29 @@
   <div class="enterprise-container">
     <!-- 头部 header 头部-->
     <el-card class="header-card">
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="企业编号">
-          <el-input class="small" v-model="formInline.user"></el-input>
+      <el-form ref="formInline" :inline="true" :model="formInline" class="demo-form-inline">
+        <el-form-item label="企业编号" prop="eid">
+          <el-input class="small" v-model="formInline.eid"></el-input>
         </el-form-item>
-        <el-form-item label="企业名称">
-          <el-input class="normal" v-model="formInline.user"></el-input>
+        <el-form-item label="企业名称" prop="name">
+          <el-input class="normal" v-model="formInline.name"></el-input>
         </el-form-item>
-        <el-form-item label="创建者">
-          <el-input class="small" v-model="formInline.user"></el-input>
+        <el-form-item label="创建者" prop="username">
+          <el-input class="small" v-model="formInline.username"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
-          <el-select class="normal" v-model="formInline.region" placeholder="请选择状态">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="状态" prop="status">
+          <el-select class="normal" v-model="formInline.status" placeholder="请选择状态">
+            <el-option label="禁用" value="0"></el-option>
+            <el-option label="启用" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">搜索</el-button>
+          <!-- search 搜索 -->
+          <el-button @click="searchEnterprise" type="primary">搜索</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button>清除</el-button>
+          <!-- clear 清除 query查询 -->
+          <el-button @click="clearQuery">清除</el-button>
         </el-form-item>
         <el-form-item>
           <!-- plus 加 -->
@@ -41,21 +43,21 @@
         <el-table-column prop="name" label="企业名称"> </el-table-column>
         <el-table-column prop="username" label="创建者"> </el-table-column>
         <!-- 如果行内的数据显示 是自定义的 那么 prop可以移除 -->
-        <el-table-column  label="创建日期">
+        <el-table-column label="创建日期">
           <template slot-scope="scope">
             {{ scope.row.create_time | formatTime }}
           </template>
         </el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.status==1">启用</span>
+            <span v-if="scope.row.status == 1">启用</span>
             <span class="red" v-else>禁用</span>
           </template>
         </el-table-column>
-        <el-table-column  label="操作">
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text">编辑</el-button>
-            <el-button type="text">{{ scope.row.status==1?'禁用':'启用' }}</el-button>
+            <el-button type="text">{{ scope.row.status == 1 ? "禁用" : "启用" }}</el-button>
             <el-button type="text">删除</el-button>
           </template>
         </el-table-column>
@@ -83,7 +85,7 @@
 // 导入 新增对话框
 import addDialog from "./components/addDialog.vue";
 // 导入接口
-import { enterpriseList } from '@/api/enterprise.js'
+import { enterpriseList } from "@/api/enterprise.js";
 export default {
   name: "enterprise",
   // 注册组件
@@ -92,21 +94,22 @@ export default {
   },
   // 生命周期钩子
   created() {
-    enterpriseList({
-      // 页码
-      page:this.page,
-      // 页容量
-      limit:this.size
-    }).then(res=>{
-      // window.console.log(res)
-      // 设置table的数据
-      this.tableData = res.data.items;
-    })
+    // 初始数据获取
+    this.getList();
   },
   data() {
     return {
       // 顶部 行内表单的数据
-      formInline: {},
+      formInline: {
+        // 企业编号
+        eid: "",
+        // 企业名称
+        name: "",
+        // 创建者
+        username: "",
+        // 状态
+        status: ""
+      },
       // 表格的数据
       tableData: [],
       // 分页器用到的 数据
@@ -126,6 +129,36 @@ export default {
     // newPage 新的页码
     pageChange(newPage) {
       window.console.log(newPage);
+    },
+    // 抽取 获取企业列表的方法
+    getList() {
+      enterpriseList({
+        // 页码
+        page: this.page,
+        // 页容量
+        limit: this.size,
+        // 展开运算符，相当于 把formInline的属性
+        // c+v到这里
+        ...this.formInline
+      }).then(res => {
+        // window.console.log(res)
+        // 设置table的数据
+        this.tableData = res.data.items;
+        // 保存 总条数
+        this.total = res.data.pagination.total;
+      });
+    },
+    // 查询企业
+    searchEnterprise() {
+      // 调用接口
+      this.getList();
+    },
+    // 清空查询
+    clearQuery() {
+      // 清空表单
+      this.$refs.formInline.resetFields();
+      // 调用接口
+      this.getList();
     }
   }
 };
@@ -150,8 +183,8 @@ export default {
     margin-top: 30px;
     text-align: center;
   }
-  span.red{
-    color:#ff4949;
+  span.red {
+    color: #ff4949;
   }
 }
 </style>
