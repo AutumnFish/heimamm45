@@ -18,6 +18,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
+          <!-- 筛选数据 -->
           <el-button type="primary" @click="searchSubject">查询</el-button>
         </el-form-item>
         <el-form-item>
@@ -192,6 +193,8 @@ export default {
     },
     // 查询数据
     searchSubject() {
+      // 修改 页码
+      this.page = 1;
       // 传递参数
       this.getList();
     },
