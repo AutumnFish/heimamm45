@@ -56,9 +56,11 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text">编辑</el-button>
-            <el-button type="text">{{ scope.row.status == 1 ? "禁用" : "启用" }}</el-button>
-            <el-button type="text">删除</el-button>
+            <el-button @click="enterEdit(scope.row)" type="text">编辑</el-button>
+            <el-button @click="changeStatus(scope.row)" type="text">{{
+              scope.row.status == 1 ? "禁用" : "启用"
+            }}</el-button>
+            <el-button @click="removeItem(scope.row)" type="text">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -78,19 +80,24 @@
     </el-card>
     <!-- 新增框 -->
     <addDialog ref="addDialog"></addDialog>
+    <!-- 编辑框 -->
+    <editDialog ref="editDialog"></editDialog>
   </div>
 </template>
 
 <script>
 // 导入 新增对话框
 import addDialog from "./components/addDialog.vue";
+// 导入 编辑对话框
+import editDialog from "./components/editDialog.vue";
 // 导入接口
-import { enterpriseList } from "@/api/enterprise.js";
+import { enterpriseList, enterpriseStatus, enterpriseRemove } from "@/api/enterprise.js";
 export default {
   name: "enterprise",
   // 注册组件
   components: {
-    addDialog
+    addDialog,
+    editDialog
   },
   // 生命周期钩子
   created() {
@@ -125,20 +132,20 @@ export default {
     sizeChange(newSize) {
       // window.console.log(newSize);
       // 保存新 页容量
-      this.size = newSize
+      this.size = newSize;
       // 页码变为1
-      this.page =1
+      this.page = 1;
       // 调用接口
-      this.getList()
+      this.getList();
     },
     // 页码改变
     // newPage 新的页码
     pageChange(newPage) {
       // window.console.log(newPage);
       // 保存新页码
-      this.page = newPage
+      this.page = newPage;
       // 调用接口
-      this.getList()
+      this.getList();
     },
     // 抽取 获取企业列表的方法
     getList() {
@@ -169,6 +176,50 @@ export default {
       this.$refs.formInline.resetFields();
       // 调用接口
       this.getList();
+    },
+    // 修改状态
+    changeStatus(item) {
+      enterpriseStatus({
+        id: item.id
+      }).then(res => {
+        // window.console.log(res)
+        // 打印的出来的
+        if (res.code == 200) {
+          this.$message.success("恭喜你，修改成功了哦！！！！！");
+          this.getList();
+        }
+      });
+    },
+    // 删除企业
+    // item 项
+    removeItem(item) {
+      this.$confirm("删不删", "就问你", {
+        confirmButtonText: "删",
+        cancelButtonText: "滚",
+        type: "warning"
+      })
+        .then(() => {
+          enterpriseRemove({
+            id: item.id
+          }).then(res => {
+            // window.console.log(res)
+            // 打印的出来的
+            if (res.code == 200) {
+              this.$message.success("恭喜你，删除成功了哦！！！！！");
+              this.getList();
+            }
+          });
+        })
+        .catch(() => {});
+    },
+    // 进入编辑状态
+    // enter 进去
+    // edit 编辑
+    enterEdit(item){
+      // 弹出编辑框
+      this.$refs.editDialog.dialogFormVisible=true;
+      // 设置数据
+      this.$refs.editDialog.editForm = JSON.parse(JSON.stringify(item)) 
     }
   }
 };

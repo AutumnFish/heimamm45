@@ -1,42 +1,5 @@
-// 导入 axios
-import axios from "axios";
-// 导入token函数 
-import {getToken} from '../utils/token';
-
-// 创建一个 学科页面使用 请求对象
-const subjectRequest = axios.create({
-  // 环境变量
-  baseURL: process.env.VUE_APP_BASEURL
-});
-
-// 拦截器
-// 添加请求  拦截器(回调函数)
-subjectRequest.interceptors.request.use(
-  function(config) {
-    // 在发送之前 干一些 事情
-    // 设置请求头 携带token
-    config.headers.token = getToken()
-    return config;
-  },
-  function(error) {
-    // 在请求错误的时候 干一些 事情
-    return Promise.reject(error);
-  }
-);
-
-// 添加响应  拦截器(回调函数)
-subjectRequest.interceptors.response.use(
-  function(response) {
-    // 对响应的数据 做 一些 事情
-    // .then 还没有触发
-    // 把 .data 处理掉 .then中少写一个 .data
-    return response.data;
-  },
-  function(error) {
-    // 响应出错时，干一些事情
-    return Promise.reject(error);
-  }
-);
+// 导入 抽取的 请求对象
+import subjectRequest from '../utils/request'
 
 // 抽取的接口方法
 // 获取列表
