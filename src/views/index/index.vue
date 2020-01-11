@@ -4,7 +4,7 @@
       <!-- 左侧 -->
       <div class="left">
         <!-- 左上角的小图标 -->
-        <i @click="collapse=!collapse" class="icon el-icon-s-fold"></i>
+        <i @click="collapse = !collapse" class="icon el-icon-s-fold"></i>
         <img class="logo" src="../../assets/index_logo.png" alt="" />
         <span class="title">黑马面面</span>
       </div>
@@ -21,7 +21,7 @@
        -->
       <el-aside class="my-aside" width="auto">
         <!-- 导航菜单 -->
-        <el-menu router  :collapse="collapse" :default-active="$route.path" class="el-menu-vertical-demo">
+        <el-menu router :collapse="collapse" :default-active="$route.path" class="el-menu-vertical-demo">
           <el-menu-item index="/index/chart">
             <!-- e-charts -->
             <i class="el-icon-pie-chart"></i>
@@ -56,7 +56,7 @@
 // 导入api方法
 import { info, logout } from "../../api/login.js";
 // 导入 删除token方法
-import { removeToken,getToken } from "../../utils/token.js";
+import { removeToken, getToken } from "../../utils/token.js";
 
 export default {
   name: "index",
@@ -64,23 +64,33 @@ export default {
     return {
       userInfo: {},
       // 是否折叠菜单
-      collapse:false
+      collapse: false
     };
   },
   beforeCreate() {
     // 获取token 并判断
-    const token = getToken()
+    const token = getToken();
     // window.console.log(token)
-    if(token==null){
+    if (token == null) {
       // 提示用用户 去登录页
-      this.$message.warning('小老弟，请先登录');
-      this.$router.push("/login")
+      this.$message.warning("小老弟，请先登录");
+      this.$router.push("/login");
     }
-     
   },
   created() {
     info().then(res => {
-      // window.console.log(res);
+      window.console.log(res);
+      // 判断 token是否有问题
+      if (res.data.code === 206) {
+        // token错误
+        // 提示用户
+        this.$message.warning("你是假的登录！！！！ 滑稽");
+        // 删除token
+        removeToken();
+        // 去登录页
+        this.$router.push("/login");
+        return;
+      }
       // 保存数据
       this.userInfo = res.data.data;
       // 头像没有基地址 自己拼接
@@ -163,7 +173,7 @@ export default {
     background: #0094ff;
   }
   // 导航菜单的 样式
-    .el-menu-vertical-demo:not(.el-menu--collapse) {
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 200px;
     min-height: 400px;
   }
