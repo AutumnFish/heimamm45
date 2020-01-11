@@ -19,6 +19,9 @@ import subject from "../views/index/subject/subject.vue";
 // 导入 获取token的函数
 import { getToken } from "@/utils/token.js";
 
+// 按需导入 弹框
+// 和组件中 this.$message是个东西
+import { Message } from "element-ui";
 // 注册
 Vue.use(VueRouter);
 
@@ -59,14 +62,25 @@ const router = new VueRouter({
   ]
 });
 
+// 定义一个 白名单 就是一个 地址的数组
+const whitePaths = ["/login"];
+
 // 注册 导航守卫（回调函数）
+// to 去的路由信息
+// from 来的路由信息
+// next 下一个（放走）
 router.beforeEach((to, from, next) => {
   window.console.log(to);
-  window.console.log(from);
-  window.console.log(next);
+  // window.console.log(from);
+  // window.console.log(next);
   // 登录页面，不用登录页可以访问
-  if (to.path === "/login") {
-    // 必须执行 
+  // window.console.log( whitePaths.indexOf(to.path))
+  // if ( whitePaths.indexOf(to.path)!=-1) {
+  window.console.log(whitePaths.includes(to.path.toLocaleLowerCase()));
+  // 如果存在
+  
+  if (whitePaths.includes(to.path.toLocaleLowerCase()) == true) {
+    // 必须执行
     next();
   } else {
     // 除了登录页面 都需要登录
@@ -77,8 +91,12 @@ router.beforeEach((to, from, next) => {
     if (token == null) {
       // 提示用用户 去登录页
       // vue实例，才可以 通过this.$message 访问弹框，这里我们先 用alert
-      window.alert("先登录");
+      // window.alert("先登录");
+      Message.warning("请先登录");
       next("/login");
+    } else {
+      // 如果token存在 就下一步
+      next();
     }
   }
 });
