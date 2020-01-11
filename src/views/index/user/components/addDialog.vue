@@ -1,20 +1,30 @@
 <template>
   <!-- 新增的对话框 -->
-  <el-dialog center width="600px" title="新增学科" :visible.sync="dialogFormVisible">
+  <el-dialog center width="600px" title="新增用户" :visible.sync="dialogFormVisible">
     <el-form :model="addForm" :rules="addRules" ref="addForm">
-      <el-form-item label="学科编号" :label-width="formLabelWidth" prop="rid">
-        <el-input v-model="addForm.rid" autocomplete="off"></el-input>
+      <el-form-item label="用户名" :label-width="formLabelWidth" prop="username">
+        <el-input v-model="addForm.username" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="学科名称" :label-width="formLabelWidth" prop="name">
-        <el-input v-model="addForm.name" autocomplete="off"></el-input>
+      <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
+        <el-input v-model="addForm.email" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="学科简称" :label-width="formLabelWidth" prop="short_name">
-        <el-input v-model="addForm.short_name" autocomplete="off"></el-input>
+      <el-form-item label="电话" :label-width="formLabelWidth" prop="phone">
+        <el-input v-model="addForm.phone" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="学科简介" :label-width="formLabelWidth" prop="intro">
-        <el-input type="textarea" :rows="2" v-model="addForm.intro" autocomplete="off"></el-input>
+      <el-form-item label="角色" prop="role_id" :label-width="formLabelWidth" >
+        <el-select class="normal" v-model="addForm.role_id" placeholder="请选择角色">
+          <el-option label="管理员" value="2"></el-option>
+          <el-option label="老师" value="3"></el-option>
+          <el-option label="学生" value="4"></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="学科备注" :label-width="formLabelWidth" prop="remark">
+      <el-form-item label="状态" prop="status" :label-width="formLabelWidth" >
+        <el-select class="normal" v-model="addForm.status" placeholder="请选择状态">
+          <el-option label="启用" value="1"></el-option>
+          <el-option label="禁用" value="0"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="用户备注" :label-width="formLabelWidth" prop="remark">
         <el-input v-model="addForm.remark" autocomplete="off"></el-input>
       </el-form-item>
     </el-form>
@@ -28,7 +38,7 @@
 <script>
 // import { subjectAdd } from "../../../../api/subject.js";
 // @等同于 /src
-import { subjectAdd } from "@/api/subject.js";
+import { userAdd } from "@/api/user.js";
 
 export default {
   methods: {
@@ -40,20 +50,19 @@ export default {
         if (valid) {
           // this.$message.success("验证成功");
           // 调用接口
-          subjectAdd(this.addForm).then(res => {
-            // window.console.log(res);
-            if(res.code===200){
+          userAdd(this.addForm).then(res => {
+            window.console.log(res);
+            if (res.code === 200) {
               this.$message.success("新增成功");
               // 关闭对话框
               this.dialogFormVisible = false;
               // 清空内容
               this.$refs.addForm.resetFields();
               // 调用父组件的 方法 重新获取数据
-              this.$parent.getList()
-
-            }else if(res.code===201){
+              this.$parent.getList();
+            } else if (res.code === 201) {
               // id重复
-              this.$message.warning('学科的编号不能重复哦！！！');
+              this.$message.warning(res.message);
             }
           });
         } else {
@@ -71,11 +80,12 @@ export default {
       dialogFormVisible: false,
       // 新增表单
       addForm: {
-        rid: "", // 学科编号
-        name: "", // 学科名称
-        short_name: "", // 学科简称
-        intro: "", // 学科简介
-        remark: "" // 学科备注
+        username: "", // 用户名
+        email: "", // 邮箱
+        phone: "", // 电话
+        role_id: "", // 角色
+        status: "", // 状态
+        remark: "" // 备注
       },
       // 表单的验证规则
       addRules: {
@@ -96,9 +106,9 @@ export default {
       }
     };
   },
-  created() {
-    window.console.log(subjectAdd);
-  }
+  // created() {
+  //   // window.console.log(subjectAdd);
+  // }
 };
 </script>
 
