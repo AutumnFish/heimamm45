@@ -115,6 +115,8 @@ export default {
             if (res.data.code === 200) {
               // 成功了
               removeToken();
+              // 把 Vuex中的 用户信息干掉
+              this.$store.state.userInfo = undefined;
               // 去登录页
               this.$router.push("/login");
             }

@@ -17,7 +17,7 @@ import enterprise from "../views/index/enterprise/enterprise.vue";
 import subject from "../views/index/subject/subject.vue";
 
 // 导入 获取token的函数
-import { getToken,removeToken } from "@/utils/token.js";
+import { getToken, removeToken } from "@/utils/token.js";
 
 // 按需导入 弹框
 // 和组件中 this.$message是个东西
@@ -27,7 +27,7 @@ import { Message } from "element-ui";
 import { info } from "@/api/login.js";
 
 // 导入 仓库
-import store from '@/store/index.js'
+import store from "@/store/index.js";
 
 // 注册
 Vue.use(VueRouter);
@@ -105,7 +105,7 @@ router.beforeEach((to, from, next) => {
       // 如果token存在 就下一步
       // 调用接口，如果数据回去成功，token对的 反之错误的
       info().then(res => {
-        window.console.log(res);
+        // window.console.log(res);
         // 判断 token是否有问题
         if (res.data.code === 206) {
           // token错误
@@ -117,13 +117,20 @@ router.beforeEach((to, from, next) => {
           next("/login");
         } else {
           // token 是对的
-          window.console.log(res);
-          // 保存数据 保存到 仓库中
-          store.state.userInfo = res.data.data;
-          // 头像没有基地址 自己拼接
-          store.state.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + store.state.userInfo.avatar;
-          // 继续向后走
-          next()
+          // window.console.log(res);
+          // 如果状态 为 禁用 提示，打回登录页
+          if (res.data.data.status === 0) {
+            Message.warning("你当前是禁用状态，请等待管理员将你启用，在访问");
+            next("/login");
+          } else {
+            // 如果状态 为 启用 放过去
+            // 保存数据 保存到 仓库中
+            store.state.userInfo = res.data.data;
+            // 头像没有基地址 自己拼接
+            store.state.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + store.state.userInfo.avatar;
+            // 继续向后走
+            next();
+          }
         }
       });
     }
