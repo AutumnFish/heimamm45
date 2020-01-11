@@ -1,20 +1,30 @@
 <template>
-  <!-- 新增的对话框 -->
-  <el-dialog center width="600px" title="编辑学科" :visible.sync="dialogFormVisible">
+  <!-- 编辑的对话框 -->
+  <el-dialog center width="600px" title="编辑用户" :visible.sync="dialogFormVisible">
     <el-form :model="editForm" :rules="editRules" ref="editForm">
-      <el-form-item label="学科编号" :label-width="formLabelWidth" prop="rid">
-        <el-input v-model="editForm.rid" autocomplete="off"></el-input>
+      <el-form-item label="用户名" :label-width="formLabelWidth" prop="username">
+        <el-input v-model="editForm.username" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="学科名称" :label-width="formLabelWidth" prop="name">
-        <el-input v-model="editForm.name" autocomplete="off"></el-input>
+      <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
+        <el-input v-model="editForm.email" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="学科简称" :label-width="formLabelWidth" prop="short_name">
-        <el-input v-model="editForm.short_name" autocomplete="off"></el-input>
+      <el-form-item label="电话" :label-width="formLabelWidth" prop="phone">
+        <el-input v-model="editForm.phone" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="学科简介" :label-width="formLabelWidth" prop="intro">
-        <el-input type="textarea" :rows="2" v-model="editForm.intro" autocomplete="off"></el-input>
+      <el-form-item label="角色" prop="role_id" :label-width="formLabelWidth">
+        <el-select class="normal" v-model="editForm.role_id" placeholder="请选择角色">
+          <el-option label="管理员" :value="2"></el-option>
+          <el-option label="老师" :value="3"></el-option>
+          <el-option label="学生" :value="4"></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="学科备注" :label-width="formLabelWidth" prop="remark">
+      <el-form-item label="状态" prop="status" :label-width="formLabelWidth">
+        <el-select class="normal" v-model="editForm.status" placeholder="请选择状态">
+          <el-option label="启用" :value="1"></el-option>
+          <el-option label="禁用" :value="0"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="用户备注" :label-width="formLabelWidth" prop="remark">
         <el-input v-model="editForm.remark" autocomplete="off"></el-input>
       </el-form-item>
     </el-form>
@@ -28,7 +38,9 @@
 <script>
 // import { subjectAdd } from "../../../../api/subject.js";
 // @等同于 /src
-import { subjectEdit } from "@/api/subject.js";
+import { userEdit } from "@/api/user.js";
+// 导入 验证的方法
+import { validatePhone, validateEmail } from "@/utils/validator.js";
 
 export default {
   methods: {
@@ -40,18 +52,17 @@ export default {
         if (valid) {
           // this.$message.success("验证成功");
           // 调用接口
-          subjectEdit(this.editForm).then(res => {
+          userEdit(this.editForm).then(res => {
             // window.console.log(res);
-            if(res.code===200){
+            if (res.code === 200) {
               this.$message.success("编辑成功");
               // 关闭对话框
               this.dialogFormVisible = false;
               // 重新获取数据
-              this.$parent.getList()
-
-            }else if(res.code===201){
+              this.$parent.getList();
+            } else if (res.code === 201) {
               // id重复
-              this.$message.warning('学科的编号不能重复哦！！！');
+              this.$message.warning(res.message);
             }
           });
         } else {
@@ -69,25 +80,40 @@ export default {
       dialogFormVisible: false,
       // 编辑表单
       editForm: {
-        rid: "", // 学科编号
-        name: "", // 学科名称
-        short_name: "", // 学科简称
-        intro: "", // 学科简介
-        remark: "" // 学科备注
+        username: "", // 用户名
+        email: "", // 邮箱
+        phone: "", // 电话
+        role_id: "", // 角色
+        status: "", // 状态
+        remark: "" // 备注
       },
       // 表单的验证规则
       editRules: {
-        rid: [
+        username: [
           {
             required: true,
-            message: "学科编号，不能为空",
+            message: "用户名，不能为空",
             trigger: "change"
           }
         ],
-        name: [
+        email: [
           {
             required: true,
-            message: "学科名称，不能为空",
+            validator: validateEmail,
+            trigger: "change"
+          }
+        ],
+        phone: [
+          {
+            required: true,
+            validator: validatePhone,
+            trigger: "change"
+          }
+        ],
+        role_id: [
+          {
+            required: true,
+            message: "用户角色，不能为空",
             trigger: "change"
           }
         ]
