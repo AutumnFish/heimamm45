@@ -17,11 +17,15 @@ import enterprise from "../views/index/enterprise/enterprise.vue";
 import subject from "../views/index/subject/subject.vue";
 
 // 导入 获取token的函数
-import { getToken } from "@/utils/token.js";
+import { getToken,removeToken } from "@/utils/token.js";
 
 // 按需导入 弹框
 // 和组件中 this.$message是个东西
 import { Message } from "element-ui";
+
+// 导入 获取用户信息的接口
+import { info } from "@/api/login.js";
+
 // 注册
 Vue.use(VueRouter);
 
@@ -70,15 +74,15 @@ const whitePaths = ["/login"];
 // from 来的路由信息
 // next 下一个（放走）
 router.beforeEach((to, from, next) => {
-  window.console.log(to);
+  // window.console.log(to);
   // window.console.log(from);
   // window.console.log(next);
   // 登录页面，不用登录页可以访问
   // window.console.log( whitePaths.indexOf(to.path))
   // if ( whitePaths.indexOf(to.path)!=-1) {
-  window.console.log(whitePaths.includes(to.path.toLocaleLowerCase()));
+  // window.console.log(whitePaths.includes(to.path.toLocaleLowerCase()));
   // 如果存在
-  
+
   if (whitePaths.includes(to.path.toLocaleLowerCase()) == true) {
     // 必须执行
     next();
@@ -96,7 +100,29 @@ router.beforeEach((to, from, next) => {
       next("/login");
     } else {
       // 如果token存在 就下一步
-      next();
+      // 调用接口，如果数据回去成功，token对的 反之错误的
+      info().then(res => {
+        window.console.log(res);
+        // 判断 token是否有问题
+        if (res.data.code === 206) {
+          // token错误
+          // 提示用户
+          Message.warning("你是假的登录！！！！ 滑稽");
+          // 删除token
+          removeToken();
+          // 去登录页
+          next("/login");
+        } else {
+          // token 是对的
+          window.console.log(res);
+          // 继续向后走
+          next()
+          // 保存数据
+          // this.userInfo = res.data.data;
+          // 头像没有基地址 自己拼接
+          // this.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + this.userInfo.avatar;
+        }
+      });
     }
   }
 });

@@ -54,7 +54,7 @@
 
 <script>
 // 导入api方法
-import { info, logout } from "../../api/login.js";
+import { logout } from "../../api/login.js";
 // 导入 删除token方法
 import { removeToken } from "../../utils/token.js";
 
@@ -81,24 +81,24 @@ export default {
     // }
   },
   created() {
-    info().then(res => {
-      window.console.log(res);
-      // 判断 token是否有问题
-      if (res.data.code === 206) {
-        // token错误
-        // 提示用户
-        this.$message.warning("你是假的登录！！！！ 滑稽");
-        // 删除token
-        removeToken();
-        // 去登录页
-        this.$router.push("/login");
-        return;
-      }
-      // 保存数据
-      this.userInfo = res.data.data;
-      // 头像没有基地址 自己拼接
-      this.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + this.userInfo.avatar;
-    });
+    // info().then(res => {
+    //   window.console.log(res);
+    //   // 判断 token是否有问题
+    //   if (res.data.code === 206) {
+    //     // token错误
+    //     // 提示用户
+    //     this.$message.warning("你是假的登录！！！！ 滑稽");
+    //     // 删除token
+    //     removeToken();
+    //     // 去登录页
+    //     this.$router.push("/login");
+    //     return;
+    //   }
+    //   // 保存数据
+    //   this.userInfo = res.data.data;
+    //   // 头像没有基地址 自己拼接
+    //   this.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + this.userInfo.avatar;
+    // });
 
     // window.console.log(this.$route)
   },
