@@ -3,21 +3,22 @@
     <!-- 头卡 -->
     <el-card class="header-card">
       <el-form ref="formInline" :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="用户名称" prop="rid">
-          <el-input class="small" v-model="formInline.rid"></el-input>
+        <el-form-item label="用户名称" prop="username">
+          <el-input class="small" v-model="formInline.username"></el-input>
         </el-form-item>
-        <el-form-item label="用户邮箱" prop="name">
-          <el-input class="normal" v-model="formInline.name"></el-input>
+        <el-form-item label="用户邮箱" prop="email">
+          <el-input class="normal" v-model="formInline.email"></el-input>
         </el-form-item>
-        <el-form-item label="角色" prop="status">
-          <el-select class="normal" v-model="formInline.status" placeholder="请选择角色">
-            <el-option label="启用" value="1"></el-option>
-            <el-option label="禁用" value="0"></el-option>
+        <el-form-item label="角色" prop="role_id">
+          <el-select class="normal" v-model="formInline.role_id" placeholder="请选择角色">
+            <el-option label="管理员" value="2"></el-option>
+            <el-option label="老师" value="3"></el-option>
+            <el-option label="学生" value="4"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
           <!-- 筛选数据 -->
-          <el-button type="primary" @click="searchSubject">搜索</el-button>
+          <el-button type="primary" @click="searchUser">搜索</el-button>
         </el-form-item>
         <el-form-item>
           <el-button @click="clearQuery">清除</el-button>
@@ -101,10 +102,9 @@ export default {
     return {
       // 行内表单的数据
       formInline: {
-        rid: "", // 学科编号
-        name: "", // 学科名称
-        username: "", // 创建者
-        status: "" // 状态
+        username: "", // 用户名
+        email: "", // 邮箱
+        role_id: "", // 角色
       },
       // 表格的数据
       tableData: [],
@@ -205,7 +205,7 @@ export default {
         .catch(() => {});
     },
     // 查询数据
-    searchSubject() {
+    searchUser() {
       // 修改 页码
       this.page = 1;
       // 传递参数
