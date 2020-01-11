@@ -25,28 +25,28 @@
         <!-- 导航菜单 -->
         <el-menu router :collapse="collapse" :default-active="$route.path" class="el-menu-vertical-demo">
           <!-- 数据 -->
-          <el-menu-item v-if="['管理员', '老师'].includes(getUserInfo.role) == true" index="/index/chart">
+          <el-menu-item v-if="['超级管理员','管理员', '老师'].includes(getUserInfo.role) == true" index="/index/chart">
             <!-- e-charts -->
             <i class="el-icon-pie-chart"></i>
             <span slot="title">数据概览</span>
           </el-menu-item>
           <!-- 用户 -->
-          <el-menu-item v-if="['管理员'].includes(getUserInfo.role) == true" index="/index/user">
+          <el-menu-item v-if="['超级管理员','管理员'].includes(getUserInfo.role) == true" index="/index/user">
             <i class="el-icon-user"></i>
             <span slot="title">用户列表</span>
           </el-menu-item>
           <!-- 题库 -->
-          <el-menu-item v-if="['管理员', '老师'].includes(getUserInfo.role) == true" index="/index/question">
+          <el-menu-item v-if="['超级管理员','管理员', '老师'].includes(getUserInfo.role) == true" index="/index/question">
             <i class="el-icon-edit-outline"></i>
             <span slot="title">题库列表</span>
           </el-menu-item>
           <!-- 企业 -->
-          <el-menu-item v-if="['管理员', '老师'].includes(getUserInfo.role) == true" index="/index/enterprise">
+          <el-menu-item v-if="['超级管理员','管理员', '老师'].includes(getUserInfo.role) == true" index="/index/enterprise">
             <i class="el-icon-office-building"></i>
             <span slot="title">企业列表</span>
           </el-menu-item>
           <!-- 学科 -->
-          <el-menu-item v-if="['管理员', '老师', '学生'].includes(getUserInfo.role) == true" index="/index/subject">
+          <el-menu-item v-if="['超级管理员','管理员', '老师', '学生'].includes(getUserInfo.role) == true" index="/index/subject">
             <i class="el-icon-notebook-2"></i>
             <span slot="title">学科列表</span>
           </el-menu-item>

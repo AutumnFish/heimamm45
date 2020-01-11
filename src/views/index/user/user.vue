@@ -45,7 +45,7 @@
             <span v-else>启用</span>
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="操作">
+        <el-table-column v-if="['超级管理员'].includes($store.state.userInfo.role)==true" prop="address" label="操作">
           <template slot-scope="scope">
             <!-- 进入编辑状态 -->
             <el-button @click="enterEdit(scope.row)" type="text">编辑</el-button>

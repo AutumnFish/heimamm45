@@ -39,14 +39,14 @@ const router = new VueRouter({
       path: "/login",
       component: login,
       meta: {
-        roles: ["管理员", "老师", "学生"]
+        roles: ["超级管理员","管理员", "老师", "学生"]
       }
     },
     {
       path: "/index",
       component: index,
       meta: {
-        roles: ["管理员", "老师", "学生"]
+        roles: ["超级管理员","管理员", "老师", "学生"]
       },
       // 嵌套路由的规则
       children: [
@@ -54,35 +54,35 @@ const router = new VueRouter({
           path: "chart", // 解析为 /index/chart
           component: chart,
           meta: {
-            roles: ["管理员", "老师"]
+            roles: ["超级管理员","管理员", "老师"]
           }
         },
         {
           path: "user", // 解析为 /index/user
           component: user,
           meta: {
-            roles: ["管理员"]
+            roles: ["超级管理员","管理员"]
           }
         },
         {
           path: "question", // 解析为 /index/question
           component: question,
           meta: {
-            roles: ["管理员", "老师"]
+            roles: ["超级管理员","管理员", "老师"]
           }
         },
         {
           path: "enterprise", // 解析为 /index/enterprise
           component: enterprise,
           meta: {
-            roles: ["管理员", "老师"]
+            roles: ["超级管理员","管理员", "老师"]
           }
         },
         {
           path: "subject", // 解析为 /index/subject
           component: subject,
           meta: {
-            roles: ["管理员", "老师", "学生"]
+            roles: ["超级管理员","管理员", "老师", "学生"]
           }
         }
       ]
