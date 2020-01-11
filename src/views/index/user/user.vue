@@ -33,11 +33,11 @@
       <!-- 表格 -->
       <el-table border :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号" width="180"> </el-table-column>
-        <el-table-column prop="rid" label="用户名" width="180"> </el-table-column>
-        <el-table-column prop="name" label="电话"> </el-table-column>
-        <el-table-column prop="short_name" label="邮箱"> </el-table-column>
-        <el-table-column prop="username" label="角色"> </el-table-column>
-        <el-table-column prop="username" label="备注"> </el-table-column>
+        <el-table-column prop="username" label="用户名" width="180"> </el-table-column>
+        <el-table-column prop="phone" label="电话"> </el-table-column>
+        <el-table-column prop="email" label="邮箱"> </el-table-column>
+        <el-table-column prop="role" label="角色"> </el-table-column>
+        <el-table-column prop="remark" label="备注"> </el-table-column>
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
             <span v-if="scope.row.status == 0" class="red">禁用</span>
@@ -83,7 +83,9 @@ import addDialog from "./components/addDialog.vue";
 // 导入 编辑框
 import editDialog from "./components/editDialog.vue";
 // 导入 学科接口
-import { subjectList, subjectStatus, subjectRemove } from "@/api/subject.js";
+import {  subjectStatus, subjectRemove } from "@/api/subject.js";
+// 导入用户接口
+import { userList} from "@/api/user.js";
 export default {
   name: "user",
   // 注册组件
@@ -137,7 +139,7 @@ export default {
     },
     // 获取数据的方法
     getList() {
-      subjectList({
+      userList({
         // 使用定义好的数据，方便后期维护
         // 页码
         page: this.page,
@@ -146,7 +148,7 @@ export default {
         // 将formInline合并进来
         ...this.formInline
       }).then(res => {
-        // window.console.log(res)
+        window.console.log(res)
         // 赋值 数据
         this.tableData = res.data.items;
         // 赋值 总条数
