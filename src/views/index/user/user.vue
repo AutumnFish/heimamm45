@@ -83,10 +83,8 @@
 import addDialog from "./components/addDialog.vue";
 // 导入 编辑框
 import editDialog from "./components/editDialog.vue";
-// 导入 学科接口
-import {  subjectStatus } from "@/api/subject.js";
 // 导入用户接口
-import { userList,userRemove} from "@/api/user.js";
+import { userList,userRemove,userStatus} from "@/api/user.js";
 export default {
   name: "user",
   // 注册组件
@@ -159,7 +157,7 @@ export default {
     changeStatus(item) {
       // window.console.log(item)
       // window.console.log(item.id)
-      subjectStatus({
+      userStatus({
         id: item.id
       }).then(res => {
         // window.console.log(res);
