@@ -11,9 +11,9 @@
       <!-- 右侧 -->
       <div class="right">
         <!-- 头像 -->
-        <img class="avatar" :src="$store.state.userInfo.avatar" alt="" />
+        <img class="avatar" :src="avatar" alt="" />
         <!-- 用户名 -->
-        <span class="username">{{ $store.state.userInfo.username }},您好</span>
+        <span class="username">{{ username }},您好</span>
         <el-button @click="logout" size="small" type="primary">退出</el-button>
       </div>
     </el-header>
@@ -61,9 +61,6 @@ import { logout } from "../../api/login.js";
 import { removeToken } from "../../utils/token.js";
 
 export default {
-
-  
-
   name: "index",
   data() {
     return {
@@ -101,7 +98,6 @@ export default {
     //   // 头像没有基地址 自己拼接
     //   this.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + this.userInfo.avatar;
     // });
-
     // window.console.log(this.$route)
   },
   methods: {
@@ -127,6 +123,20 @@ export default {
         .catch(() => {
           // 点击取消
         });
+    }
+  },
+  // 计算属性简化 Vuex的数据获取
+  computed: {
+    getUserInfo() {
+      return this.$store.state.userInfo;
+      // 返回数据即可
+    },
+    username() {
+      return this.$store.state.userInfo.username;
+      // 返回数据即可
+    },
+    avatar() {
+      return this.$store.state.userInfo.avatar;
     }
   }
 };
