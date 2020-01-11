@@ -56,9 +56,12 @@
 // 导入api方法
 import { info, logout } from "../../api/login.js";
 // 导入 删除token方法
-import { removeToken, getToken } from "../../utils/token.js";
+import { removeToken } from "../../utils/token.js";
 
 export default {
+
+  
+
   name: "index",
   data() {
     return {
@@ -68,14 +71,14 @@ export default {
     };
   },
   beforeCreate() {
-    // 获取token 并判断
-    const token = getToken();
-    // window.console.log(token)
-    if (token == null) {
-      // 提示用用户 去登录页
-      this.$message.warning("小老弟，请先登录");
-      this.$router.push("/login");
-    }
+    // // 获取token 并判断
+    // const token = getToken();
+    // // window.console.log(token)
+    // if (token == null) {
+    //   // 提示用用户 去登录页
+    //   this.$message.warning("小老弟，请先登录");
+    //   this.$router.push("/login");
+    // }
   },
   created() {
     info().then(res => {
