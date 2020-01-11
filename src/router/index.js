@@ -37,32 +37,53 @@ const router = new VueRouter({
   routes: [
     {
       path: "/login",
-      component: login
+      component: login,
+      meta: {
+        roles: ["管理员", "老师", "学生"]
+      }
     },
     {
       path: "/index",
       component: index,
+      meta: {
+        roles: ["管理员", "老师", "学生"]
+      },
       // 嵌套路由的规则
       children: [
         {
           path: "chart", // 解析为 /index/chart
-          component: chart
+          component: chart,
+          meta: {
+            roles: ["管理员", "老师"]
+          }
         },
         {
           path: "user", // 解析为 /index/user
-          component: user
+          component: user,
+          meta: {
+            roles: ["管理员"]
+          }
         },
         {
           path: "question", // 解析为 /index/question
-          component: question
+          component: question,
+          meta: {
+            roles: ["管理员", "老师"]
+          }
         },
         {
           path: "enterprise", // 解析为 /index/enterprise
-          component: enterprise
+          component: enterprise,
+          meta: {
+            roles: ["管理员", "老师"]
+          }
         },
         {
           path: "subject", // 解析为 /index/subject
-          component: subject
+          component: subject,
+          meta: {
+            roles: ["管理员", "老师", "学生"]
+          }
         }
       ]
     }
@@ -128,8 +149,19 @@ router.beforeEach((to, from, next) => {
             store.state.userInfo = res.data.data;
             // 头像没有基地址 自己拼接
             store.state.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + store.state.userInfo.avatar;
-            // 继续向后走
-            next();
+            // 权限的匹配
+            // 路由源信息中的值 和 当前用户的 角色 来匹配
+            
+            // to.meta.roles   ["管理员","老师"]
+            // store.state.userInfo.role  "老师"
+            // ["管理员","老师"].includes("老师")
+            if(to.meta.roles.includes(store.state.userInfo.role)==true){
+              // 有权限 翻过去
+              next();
+            }else{
+              // 没有权限，提示用户
+              Message.warning("你没有访问的权限哦，请联系管理员，充钱");
+            }
           }
         }
       });
