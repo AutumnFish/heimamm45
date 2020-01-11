@@ -20,8 +20,13 @@ Vue.config.productionTip = false
 // 导入 全局过滤器
 import './filters/index.js'
 
+// 导入 仓库
+import store from '@/store/index.js';
+
 new Vue({
   render: h => h(App),
   // 挂载 注入 Vue实例
-  router
+  router,
+  // 挂载仓库对象
+  store
 }).$mount('#app')

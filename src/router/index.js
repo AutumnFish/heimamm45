@@ -26,6 +26,9 @@ import { Message } from "element-ui";
 // 导入 获取用户信息的接口
 import { info } from "@/api/login.js";
 
+// 导入 仓库
+import store from '@/store/index.js'
+
 // 注册
 Vue.use(VueRouter);
 
@@ -115,12 +118,12 @@ router.beforeEach((to, from, next) => {
         } else {
           // token 是对的
           window.console.log(res);
+          // 保存数据 保存到 仓库中
+          store.state.userInfo = res.data.data;
+          // 头像没有基地址 自己拼接
+          store.state.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + store.state.userInfo.avatar;
           // 继续向后走
           next()
-          // 保存数据
-          // this.userInfo = res.data.data;
-          // 头像没有基地址 自己拼接
-          // this.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + this.userInfo.avatar;
         }
       });
     }

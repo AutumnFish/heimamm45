@@ -10,8 +10,10 @@
       </div>
       <!-- 右侧 -->
       <div class="right">
-        <img class="avatar" :src="userInfo.avatar" alt="" />
-        <span class="username">{{ userInfo.username }},您好</span>
+        <!-- 头像 -->
+        <img class="avatar" :src="$store.state.userInfo.avatar" alt="" />
+        <!-- 用户名 -->
+        <span class="username">{{ $store.state.userInfo.username }},您好</span>
         <el-button @click="logout" size="small" type="primary">退出</el-button>
       </div>
     </el-header>
