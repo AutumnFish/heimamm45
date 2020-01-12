@@ -1,7 +1,7 @@
 <template>
   <!-- opened 对话框完全打开之后触发 -->
   <el-dialog @opened="opened" class="question-add" fullscreen title="新增题库测试" :visible.sync="dialogFormVisible">
-    <el-form class="question-form" :model="addForm">
+    <el-form :label-position="position" class="question-form" :model="addForm">
       <el-form-item label="学科" :label-width="formLabelWidth">
         <el-select v-model="addForm.status" placeholder="请选择学科">
           <!-- 通过父组件 获取数据 -->
@@ -129,12 +129,32 @@
       </el-form-item>
       <!-- 分割线 -->
       <el-divider></el-divider>
+      <!-- 解析视频 -->
+      <el-form-item label="解析视频" :label-width="formLabelWidth">
+        <el-upload
+          class="upload-demo"
+          :action="uploadUrl"
+          :on-success="handleVideoSuccess"
+          :before-upload="beforeVideoUpload"
+        >
+          <el-button size="small" type="success">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传视频MP4文件，且不超过2MB</div>
+        </el-upload>
+        <video class="video" controls autoplay loop v-if="videoUrl" :src="videoUrl"></video>
+      </el-form-item>
+
+      <!-- 分割线 -->
+      <el-divider></el-divider>
       <!-- 答案解析 -->
       <el-form-item label="答案解析"> </el-form-item>
       <div class="answer-toolbar"></div>
       <div class="answer-content">
         <p>请在这里输入</p>
       </div>
+      <!-- 分割线 -->
+      <el-divider></el-divider>
+      <el-form-item label="试题备注" :label-width="formLabelWidth"> </el-form-item>
+      <el-input v-model="addForm.xxx" type="textarea" rows="2"></el-input>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -155,7 +175,7 @@ export default {
       // 是否显示对话框
       dialogFormVisible: false,
       //   文本宽度
-      formLabelWidth: "60px",
+      formLabelWidth: "120px",
       // 文件的上传地址
       uploadUrl: process.env.VUE_APP_BASEURL + "/question/upload",
       // 本地预览地址 A
@@ -166,6 +186,10 @@ export default {
       imageCUrl: "",
       // 本地预览地址 D
       imageDUrl: "",
+      // 视频上传之后的 预览地址
+      videoUrl: "",
+      // 对其方式
+      position:'left',
       // 新增表单
       addForm: {
         // 选项
@@ -190,7 +214,9 @@ export default {
             text: "炸酱面",
             image: "upload/20191129/4067f19ab53a5e8388ad3459e23110f0.jpeg"
           }
-        ]
+        ],
+        // 视频
+        video: ""
       },
       // 选项
       options: regionData,
@@ -243,6 +269,13 @@ export default {
       // window.console.log(res);
       this.addForm.select_options[3].image = res.data.url;
     },
+    // 视频 上传组件钩子
+    handleVideoSuccess(res, file) {
+      // 视频预览地址
+      this.videoUrl = URL.createObjectURL(file.raw);
+      //   window.console.log(res);
+      this.addForm.video = res.data.url;
+    },
     // 验证规则
     beforeAvatarUpload(file) {
       //   window.console.log(file)
@@ -254,6 +287,20 @@ export default {
       }
       if (!isLt2M) {
         this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
+    // 视频的校验规则
+    beforeVideoUpload(file) {
+      //   window.console.log(file);
+      const isJPG = file.type === "video/mp4";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传视频只能是 MP4 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传视频大小不能超过 2MB!");
       }
       return isJPG && isLt2M;
     }
@@ -316,6 +363,9 @@ export default {
         width: 476px;
         margin-right: 20px;
       }
+    }
+    .video {
+      width: 320px;
     }
   }
 }
