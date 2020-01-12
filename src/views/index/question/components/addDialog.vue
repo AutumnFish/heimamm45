@@ -93,6 +93,7 @@
         label="单选"
         prop="single_select_answer"
         :label-width="formLabelWidth"
+        v-if="addForm.type === 1"
       >
         <!-- 单选框组 -->
         <el-radio-group v-model="addForm.single_select_answer">
@@ -162,6 +163,94 @@
           </div>
         </el-radio-group>
       </el-form-item>
+      <!-- 多选区域 -->
+      <el-form-item
+        label="多选"
+        prop="multiple_select_answer"
+        :label-width="formLabelWidth"
+        v-else-if="addForm.type === 2"
+      >
+        <!-- 多选框组 -->
+        <el-checkbox-group v-model="addForm.multiple_select_answer">
+          <!-- 选项A  option 选项 box 盒子-->
+          <div class="option-box">
+            <el-checkbox label="A">A</el-checkbox>
+            <el-input v-model="addForm.select_options[0].text"></el-input>
+            <!-- 上传组件 -->
+            <el-upload
+              class="avatar-uploader"
+              :action="uploadUrl"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img v-if="imageAUrl" :src="imageAUrl" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+          <!-- 选项B  option 选项 box 盒子-->
+          <div class="option-box">
+            <el-checkbox label="B">B</el-checkbox>
+            <el-input v-model="addForm.select_options[1].text"></el-input>
+            <!-- 上传组件 -->
+            <el-upload
+              class="avatar-uploader"
+              :action="uploadUrl"
+              :show-file-list="false"
+              :on-success="handleBvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img v-if="imageBUrl" :src="imageBUrl" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+          <!-- 选项C  option 选项 box 盒子-->
+          <div class="option-box">
+            <el-checkbox label="C">C</el-checkbox>
+            <el-input v-model="addForm.select_options[2].text"></el-input>
+            <!-- 上传组件 -->
+            <el-upload
+              class="avatar-uploader"
+              :action="uploadUrl"
+              :show-file-list="false"
+              :on-success="handleCvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img v-if="imageCUrl" :src="imageCUrl" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+          <!-- 选项D  option 选项 box 盒子-->
+          <div class="option-box">
+            <el-checkbox label="D">D</el-checkbox>
+            <el-input v-model="addForm.select_options[3].text"></el-input>
+            <!-- 上传组件 -->
+            <el-upload
+              class="avatar-uploader"
+              :action="uploadUrl"
+              :show-file-list="false"
+              :on-success="handleDvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img v-if="imageDUrl" :src="imageDUrl" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+        </el-checkbox-group>
+      </el-form-item>
+      <!-- 简答区域 -->
+      <el-form-item
+        label="简答"
+        prop="short_answer"
+        :label-width="formLabelWidth"
+        v-else
+      >
+        <el-input
+          type="textarea"
+          rows="2"
+          v-model="addForm.short_answer"
+        ></el-input>
+      </el-form-item>
       <!-- 分割线 -->
       <el-divider></el-divider>
       <!-- 解析视频 -->
@@ -171,6 +260,7 @@
           :action="uploadUrl"
           :on-success="handleVideoSuccess"
           :before-upload="beforeVideoUpload"
+          :show-file-list="false"
         >
           <el-button size="small" type="success">点击上传</el-button>
           <div slot="tip" class="el-upload__tip">
@@ -186,7 +276,6 @@
           :src="videoUrl"
         ></video>
       </el-form-item>
-
       <!-- 分割线 -->
       <el-divider></el-divider>
       <!-- 答案解析 -->
@@ -266,6 +355,10 @@ export default {
             image: 'upload/20191129/4067f19ab53a5e8388ad3459e23110f0.jpeg'
           }
         ],
+        // 多选的 答案
+        multiple_select_answer: [],
+        // 简答 的 答案
+        short_answer: '',
         // 视频
         video: '',
         // 学科
@@ -294,6 +387,14 @@ export default {
         // 学科
         subject: [
           { required: true, message: '学科不能为空', trigger: 'change' }
+        ],
+        // 简答
+        short_answer: [
+          { required: true, message: '简答题的答案不能为空', trigger: 'change' }
+        ],
+        // 多选的答案
+        multiple_select_answer: [
+          { required: true, message: '多选答案不能为空', trigger: 'change' }
         ],
         // 阶段
         step: [{ required: true, message: '阶段不能为空', trigger: 'change' }],
@@ -448,10 +549,10 @@ export default {
               this.titleEditor.txt.html('<p>请输入内容</p>');
               this.answerEditor.txt.html('<p>请输入内容</p>');
               this.videoUrl = '';
-              this.imageAUrl = ''
-              this.imageBUrl = ''
-              this.imageCUrl = ''
-              this.imageDUrl = ''
+              this.imageAUrl = '';
+              this.imageBUrl = '';
+              this.imageCUrl = '';
+              this.imageDUrl = '';
             }
           });
         } else {
