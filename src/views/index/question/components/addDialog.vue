@@ -63,17 +63,17 @@
         <el-radio-group v-model="radio">
           <!-- 选项A  option 选项 box 盒子-->
           <div class="option-box">
-            <el-radio :label="3">A</el-radio>
-            <el-input v-model="xxx"></el-input>
+            <el-radio label="A">A</el-radio>
+            <el-input v-model="addForm.select_options[0].text"></el-input>
             <!-- 上传组件 -->
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              :action="uploadUrl"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
             >
-              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+              <img v-if="imageAUrl" :src="imageAUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
@@ -108,8 +108,36 @@ export default {
       dialogFormVisible: false,
       //   文本宽度
       formLabelWidth: "60px",
+      // 文件的上传地址
+      uploadUrl: process.env.VUE_APP_BASEURL + "/question/upload",
+      // 本地预览地址 A
+      imageAUrl: "",
       // 新增表单
-      addForm: {},
+      addForm: {
+        // 选项
+        select_options: [
+          {
+            label: "A",
+            text: "狗不理",
+            image: "upload/20191129/fd5f03a07d95e3948860240564b180e4.jpeg"
+          },
+          {
+            label: "B",
+            text: "猫不理",
+            image: "upload/20191129/e93e7bb72accda7f3159cdabc4203991.jpeg"
+          },
+          {
+            label: "C",
+            text: "麻花",
+            image: "upload/20191129/b7caf98be9d0aa6764b0112ba0dfa19e.jpeg"
+          },
+          {
+            label: "D",
+            text: "炸酱面",
+            image: "upload/20191129/4067f19ab53a5e8388ad3459e23110f0.jpeg"
+          }
+        ]
+      },
       // 选项
       options: regionData,
       // 编辑器 标题
@@ -136,6 +164,26 @@ export default {
         // create方法
         this.answerEditor.create();
       }
+    },
+    // 选项A的 上传组件钩子
+    handleAvatarSuccess(res, file) {
+      this.imageAUrl = URL.createObjectURL(file.raw);
+      //   window.console.log(res);
+      this.addForm.select_options[0].image = res.data.url;
+    },
+    // 验证规则
+    beforeAvatarUpload(file) {
+      //   window.console.log(file)
+      const isJPG = file.type === "image/jpeg" || file.type === "image/png";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 或 PNG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
     }
   }
 };
