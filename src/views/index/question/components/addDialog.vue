@@ -57,6 +57,14 @@
       <div class="title-content">
         <p>请在这里输入</p>
       </div>
+      <!-- 分割线 -->
+      <el-divider></el-divider>
+      <!-- 答案解析 -->
+      <el-form-item label="答案解析"> </el-form-item>
+      <div class="answer-toolbar"></div>
+      <div class="answer-content">
+        <p>请在这里输入</p>
+      </div>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -81,17 +89,31 @@ export default {
       // 新增表单
       addForm: {},
       // 选项
-      options: regionData
+      options: regionData,
+      // 编辑器 标题
+      titleEditor: undefined,
+      // 编辑器 答案
+      answerEditor: undefined
     };
   },
   methods: {
     opened() {
-      // 创建编辑器
-      // title 标题
-      // editor 编辑器
-      const titleEditor = new wangeditor(".title-toolbar", ".title-content");
-      // create方法
-      titleEditor.create();
+      if (this.titleEditor == undefined) {
+        // 创建编辑器
+        // title 标题
+        // editor 编辑器
+        this.titleEditor = new wangeditor(".title-toolbar", ".title-content");
+        // create方法
+        this.titleEditor.create();
+      }
+      if (this.answerEditor == undefined) {
+        // 创建编辑器
+        // answer 回答，答案
+        // editor 编辑器
+        this.answerEditor = new wangeditor(".answer-toolbar", ".answer-content");
+        // create方法
+        this.answerEditor.create();
+      }
     }
   }
 };
@@ -106,11 +128,13 @@ export default {
     width: 832px;
     margin: 0 auto;
   }
-  .title-toolbar {
+  .title-toolbar,
+  .answer-toolbar {
     border: 1px solid #cbcbcb;
     border-bottom: none;
   }
-  .title-content {
+  .title-content,
+  .answer-content {
     height: 100px;
     border: 1px solid #cbcbcb;
   }
