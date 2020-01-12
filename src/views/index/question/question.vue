@@ -56,7 +56,7 @@
         </el-form-item>
         <el-form-item class='control'>
           <!-- plus 加 -->
-          <el-button type="primary" icon="el-icon-plus">新增试题</el-button>
+          <el-button @click="$refs.addDialog.dialogFormVisible=true" type="primary" icon="el-icon-plus">新增试题</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -99,6 +99,8 @@
       >
       </el-pagination>
     </el-card>
+    <!-- 新增对话框 -->
+    <addDialog ref="addDialog"></addDialog>
   </div>
 </template>
 
@@ -107,8 +109,14 @@
 import {subjectList} from '@/api/subject.js'
 // 导入企业的接口方法
 import {enterpriseList} from '@/api/enterprise.js'
+// 导入 新增框
+import addDialog from './components/addDialog.vue'
 export default {
   name: "question",
+  // 注册组件
+  components:{
+    addDialog
+  },
   data() {
     return {
       formInline: {},
