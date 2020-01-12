@@ -16,8 +16,7 @@
         </el-form-item>
         <el-form-item label="企业" prop="status">
           <el-select class="normal" v-model="formInline.status" placeholder="请选择企业">
-            <el-option label="禁用" value="0"></el-option>
-            <el-option label="启用" value="1"></el-option>
+            <el-option v-for="item in enterpriseList" :label="item.short_name" :value="item.id" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="题型" prop="status">
@@ -106,6 +105,8 @@
 <script>
 // 导入学科的接口方法
 import {subjectList} from '@/api/subject.js'
+// 导入企业的接口方法
+import {enterpriseList} from '@/api/enterprise.js'
 export default {
   name: "question",
   data() {
@@ -120,13 +121,21 @@ export default {
       // 总条数
       total: 0,
       // 学科的数据
-      subjectList:[]
+      subjectList:[],
+      // 企业的数据
+      enterpriseList:[],
     };
   },
   created(){
+    // 学科数据
     subjectList().then(res=>{
       // window.console.log(res)
       this.subjectList = res.data.items;
+    })
+    // 企业数据
+    enterpriseList().then(res=>{
+      // window.console.log(res)
+      this.enterpriseList = res.data.items;
     })
   },
   methods: {
