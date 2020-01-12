@@ -59,6 +59,28 @@
       </div>
       <!-- 分割线 -->
       <el-divider></el-divider>
+      <el-form-item label="单选" :label-width="formLabelWidth">
+        <el-radio-group v-model="radio">
+          <!-- 选项A  option 选项 box 盒子-->
+          <div class="option-box">
+            <el-radio :label="3">A</el-radio>
+            <el-input v-model="xxx"></el-input>
+            <!-- 上传组件 -->
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+        </el-radio-group>
+      </el-form-item>
+      <!-- 分割线 -->
+      <el-divider></el-divider>
       <!-- 答案解析 -->
       <el-form-item label="答案解析"> </el-form-item>
       <div class="answer-toolbar"></div>
@@ -120,26 +142,61 @@ export default {
 </script>
 
 <style lang="less">
-.question-add {
-  .el-input {
-    width: 364px;
-  }
-  .question-form {
-    width: 832px;
-    margin: 0 auto;
-  }
-  .title-toolbar,
-  .answer-toolbar {
-    border: 1px solid #cbcbcb;
-    border-bottom: none;
-  }
-  .title-content,
-  .answer-content {
-    height: 100px;
-    border: 1px solid #cbcbcb;
-  }
-  .w-e-text::-webkit-scrollbar {
-    display: none;
+.question-container {
+  .question-add {
+    .el-input {
+      width: 364px;
+    }
+    .question-form {
+      width: 832px;
+      margin: 0 auto;
+    }
+    .title-toolbar,
+    .answer-toolbar {
+      border: 1px solid #cbcbcb;
+      border-bottom: none;
+    }
+    .title-content,
+    .answer-content {
+      height: 100px;
+      border: 1px solid #cbcbcb;
+    }
+    .w-e-text::-webkit-scrollbar {
+      display: none;
+    }
+
+    // 上传组件的样式
+    .avatar-uploader .el-upload {
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+      border-color: #409eff;
+    }
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #8c939d;
+      width: 178px;
+      height: 178px;
+      line-height: 178px;
+      text-align: center;
+    }
+    .avatar {
+      width: 178px;
+      height: 178px;
+      display: block;
+    }
+    .option-box {
+      display: flex;
+      align-items: center;
+      .el-input {
+        width: 476px;
+        margin-right: 20px;
+      }
+    }
   }
 }
 </style>
