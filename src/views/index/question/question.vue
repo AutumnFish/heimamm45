@@ -5,8 +5,7 @@
       <el-form ref="formInline" :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="学科" prop="status">
           <el-select class="normal" v-model="formInline.status" placeholder="请选择学科">
-            <el-option label="禁用" value="0"></el-option>
-            <el-option label="启用" value="1"></el-option>
+            <el-option v-for="item in subjectList" :label="item.short_name" :value="item.id" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="阶段" prop="status">
@@ -105,6 +104,8 @@
 </template>
 
 <script>
+// 导入学科的接口方法
+import {subjectList} from '@/api/subject.js'
 export default {
   name: "question",
   data() {
@@ -117,8 +118,16 @@ export default {
       // 页容量选项
       pageSize: [2, 4, 6, 8],
       // 总条数
-      total: 0
+      total: 0,
+      // 学科的数据
+      subjectList:[]
     };
+  },
+  created(){
+    subjectList().then(res=>{
+      // window.console.log(res)
+      this.subjectList = res.data.items;
+    })
   },
   methods: {
     // 页容量改变
