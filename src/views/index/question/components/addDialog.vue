@@ -425,11 +425,35 @@ export default {
     },
     // 提交表单
     submitForm() {
+      // window.console.log(questionAdd)
+
+      // this.answerEditor.txt.clear()
+      // this.answerEditor.txt.clear()
       this.$refs.addForm.validate(valid => {
         if (valid) {
-          questionAdd(this.addForm).then(res=>{
-            window.console.log(res)
-          })
+          questionAdd(this.addForm).then(res => {
+            // window.console.log(res)
+            if (res.code === 200) {
+              this.$message.success('新增成功啦！');
+              this.dialogFormVisible = false;
+              // 清空表单
+              this.$refs.addForm.resetFields();
+              // 选项 去掉
+              this.addForm.select_options.forEach(v => {
+                // window.console.log(v);
+                v.text = '';
+                v.image = '';
+              });
+
+              this.titleEditor.txt.html('<p>请输入内容</p>');
+              this.answerEditor.txt.html('<p>请输入内容</p>');
+              this.videoUrl = '';
+              this.imageAUrl = ''
+              this.imageBUrl = ''
+              this.imageCUrl = ''
+              this.imageDUrl = ''
+            }
+          });
         } else {
           this.$message.error('格式不太对哦，检查一下');
           return false;
