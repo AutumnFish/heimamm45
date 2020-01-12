@@ -1,5 +1,6 @@
 <template>
-  <el-dialog class="question-add" fullscreen title="新增题库测试" :visible.sync="dialogFormVisible">
+  <!-- opened 对话框完全打开之后触发 -->
+  <el-dialog @opened="opened" class="question-add" fullscreen title="新增题库测试" :visible.sync="dialogFormVisible">
     <el-form class="question-form" :model="addForm">
       <el-form-item label="学科" :label-width="formLabelWidth">
         <el-select v-model="addForm.status" placeholder="请选择学科">
@@ -50,6 +51,12 @@
       </el-form-item>
       <!-- 分割线 -->
       <el-divider></el-divider>
+      <!-- 试题标题 -->
+      <el-form-item label="试题标题"> </el-form-item>
+      <div class="title-toolbar"></div>
+      <div class="title-content">
+        <p>请在这里输入</p>
+      </div>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -61,17 +68,31 @@
 <script>
 // 导入 省市区数据
 import { regionData } from "element-china-area-data";
+// 导入 富文本编辑器的 构造函数
+import wangeditor from "wangeditor";
 export default {
   name: "addDialog",
   data() {
     return {
       // 是否显示对话框
       dialogFormVisible: false,
+      //   文本宽度
+      formLabelWidth: "60px",
       // 新增表单
       addForm: {},
       // 选项
       options: regionData
     };
+  },
+  methods: {
+    opened() {
+      // 创建编辑器
+      // title 标题
+      // editor 编辑器
+      const titleEditor = new wangeditor(".title-toolbar", ".title-content");
+      // create方法
+      titleEditor.create();
+    }
   }
 };
 </script>
@@ -84,6 +105,17 @@ export default {
   .question-form {
     width: 832px;
     margin: 0 auto;
+  }
+  .title-toolbar {
+    border: 1px solid #cbcbcb;
+    border-bottom: none;
+  }
+  .title-content {
+    height: 100px;
+    border: 1px solid #cbcbcb;
+  }
+  .w-e-text::-webkit-scrollbar {
+    display: none;
   }
 }
 </style>
