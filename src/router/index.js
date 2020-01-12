@@ -45,6 +45,8 @@ const router = new VueRouter({
     {
       path: "/index",
       component: index,
+      // 重定向
+      redirect:"/index/subject",
       meta: {
         roles: ["超级管理员","管理员", "老师", "学生"]
       },
