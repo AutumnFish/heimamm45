@@ -214,7 +214,7 @@ export default {
       // 页容量
       size: 4,
       // 页容量选项
-      pageSize: [2, 4, 6, 8],
+      pageSizes: [2, 4, 6, 8],
       // 总条数
       total: 0,
       // 学科的数据
@@ -222,7 +222,9 @@ export default {
       // 企业的数据
       enterpriseList: [],
       // 表格的数据
-      tableData: []
+      tableData: [],
+      // 日期的数据
+      value1:""
     };
   },
   created() {

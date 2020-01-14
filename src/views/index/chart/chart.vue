@@ -38,14 +38,81 @@
 </template>
 
 <script>
+// 导包
+import echarts from 'echarts';
+// 导入接口
+import { chartQuestion } from '@/api/chart.js';
+
 export default {
-  name: 'chart'
+  name: 'chart',
+  // 使用 依赖于接口数据，并且依赖于 dom元素的 初始化逻辑
+  // 一般 全部写在 mounted中
+  mounted() {
+    chartQuestion().then(res => {
+      window.console.log(res);
+      // 基于准备好的dom，初始化echarts实例
+      var myChart = echarts.init(document.querySelector('.charts-box'));
+      // map方法 返回一个新的数组
+      // 传入回调函数 每次会把 每一项 传给V
+      // return 的值 最终会拼成一个 新的数组
+      const nameArr = res.data.map(v => {
+        return v.name;
+      });
+      window.console.log(nameArr);
+
+      // 指定图表的配置项和数据
+      var option = {
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        legend: {
+          orient: 'vertical',
+          right: 10,
+          data: res.data.map(v => {
+            return v.name;
+          })
+        },
+        series: [
+          {
+            name: '访问来源',
+            type: 'pie',
+            radius: ['50%', '70%'],
+            avoidLabelOverlap: false,
+            color: ['#0094ff', '#f76137', '#f9b358','#e91e56'],
+            label: {
+              normal: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                show: true,
+                textStyle: {
+                  fontSize: '30',
+                  fontWeight: 'bold'
+                }
+              }
+            },
+            labelLine: {
+              normal: {
+                show: false
+              }
+            },
+            data: res.data
+          }
+        ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    });
+  }
 };
 </script>
 
 <style lang="less">
 .chart-container {
-  ul{
+  ul {
     list-style: none;
   }
   .card-header {
